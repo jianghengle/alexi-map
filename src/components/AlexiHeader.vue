@@ -2,14 +2,14 @@
   <div>
     <nav class="nav header">
         <div class="nav-left">
-          <router-link class="nav-item app-name" :to="'/'">
+          <a class="nav-item app-name">
             Alexi Explorer
-          </router-link>
+          </a>
         </div>
         <div class="nav-right">
-          <router-link class="nav-item app-item" :to="'/help'">
+          <a class="nav-item app-item">
             <icon name="question"></icon>&nbsp;Help
-          </router-link>
+          </a>
         </div>
     </nav>
   </div>
@@ -31,22 +31,21 @@ export default {
 <style lang="scss" scoped>
 .header {
   background-color: black;
-  border-radius: 3px;
 }
 
 .app-name {
-  color: #FFFFFF;
+  color: #FFFFFF!important;
   font-weight: bold;
   font-size: 18px;
   cursor: pointer;
 }
 
 .app-item {
-  color: #FFFFFF;
+  color: #FFFFFF!important;
   cursor: pointer;
 }
 
 a:hover {
-  color: #EEEEEE;
+  color: #EEEEEE!important;
 }
 </style>
