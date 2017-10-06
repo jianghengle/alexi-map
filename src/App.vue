@@ -28,4 +28,15 @@ body {
   color: black;
 }
 
+.date-picker-wrapper {
+  display: inline-block;
+}
+
+.date-picker-input{
+  cursor: pointer;
+  height: 35px;
+  text-align: center;
+  font-size: 1rem;
+}
+
 </style>

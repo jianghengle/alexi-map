@@ -5,6 +5,7 @@
         ref="map"
         :center="center"
         :zoom="zoom"
+        :options="{scrollwheel: false}"
         style="width: 100%; height: 600px"
         @rightclick="drawRectangle"
         @bounds_changed="mapBoundsChanged"
@@ -65,24 +66,7 @@
         </span>
       </div>
 
-      <div v-if="rectBounds" class="images">
-        <div v-for="(row, i) in rectTileMatrix" :key="'rr' + i" class="image-row">
-          <img v-for="(cell, j) in row"
-            :key="'rc' + i + '-' + j"
-            :src="cell.png"
-            :height="imageSize"
-            :width="imageSize"
-            :class="{'tile-border': showTilesOnImage}">
-        </div>
-        <div class="selection-on-image"
-          v-show="showSelectionOnImage"
-          :style="{
-            'top': selectionOnImage.top + 'px',
-            'left': selectionOnImage.left + 'px',
-            'height': selectionOnImage.height + 'px',
-            'width': selectionOnImage.width + 'px'
-          }">
-        </div>
+      <div v-if="rectBounds">
         <div class="image-options">
           <label class="checkbox image-checkbox">
             <input type="checkbox" v-model="showTilesOnImage">
@@ -93,21 +77,63 @@
             Show Selection
           </label>
           <span class="image-input">
-            <label class="image-input-label">Width</label>
-            <input class="input image-input-input" type="number" v-model.number="windowWidth">
+            <label class="image-input-label">Image Size</label>
+            <input class="input image-input-input" type="number" v-model.number="imageSize">
+          </span>
+          <span class="date-inputs">
+            <label class="image-input-label" v-if="pickRange">Days</label>
+            <label class="image-input-label" v-if="!pickRange">Day</label>
+            <datepicker
+              wrapper-class="date-picker-wrapper"
+              input-class="date-picker-input"
+              format="yyyy-MM-dd"
+              :value="dateWindow[0]"
+              :disabled="dateFromDisabled"
+              v-on:selected="dateFromSelected">
+            </datepicker>
+            <datepicker
+              v-if="pickRange"
+              wrapper-class="date-picker-wrapper"
+              input-class="date-picker-input"
+              format="yyyy-MM-dd"
+              :value="dateWindow[1]"
+              :disabled="dateToDisabled"
+              v-on:selected="dateToSelected">
+            </datepicker>
+            <label class="checkbox image-checkbox">
+              <input type="checkbox" v-model="pickRange">
+              Range
+            </label>
           </span>
         </div>
-        <div class="data-file-table">
-          <div class="label">Tile files</div>
-          <table class="table is-bordered">
-            <tbody>
-              <tr v-for="(row, i) in rectTileMatrix" :key="'rtr' + i">
-                <td v-for="(cell, j) in row" :key="'rtc-' + i + '-' + j">
-                  <a class="button is-link" :href="cell.tiff">{{cell.file}}</a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-for="(d, k) in days" :key="'d' + d">
+          <div class="date-label">{{rectTileMatrix[0][0].days[d].date}}</div>
+          <div class="images">
+            <div v-for="(row, i) in rectTileMatrix" :key="d + 'rr' + i" class="image-row">
+              <a v-for="(cell, j) in row" :key="d + 'rc' + i + '-' + j"
+                :href="cell.days[d].tif"
+                :id="'tile-' + d + '-' + i + '-' + j">
+                <img :src="cell.days[d].png"
+                  :height="imageSize"
+                  :width="imageSize"
+                  :class="{'tile-border': showTilesOnImage}">
+              </a>
+            </div>
+            <div class="selection-on-image"
+              v-show="showSelectionOnImage"
+              :style="{
+                'top': selectionOnImage.top + 'px',
+                'left': selectionOnImage.left + 'px',
+                'height': selectionOnImage.height + 'px',
+                'width': selectionOnImage.width + 'px'
+              }">
+            </div>
+          </div>
+        </div>
+        <div class="download-button">
+          <a class="button is-info rectangle-button" @click="downloadAll">
+            Download All {{days.length * rectTileMatrix.length * rectTileMatrix[0].length}} Tiles
+          </a>
         </div>
       </div>
     </div>
@@ -116,27 +142,46 @@
 </template>
 
 <script>
+import DateForm from 'dateformat'
+import Datepicker from 'vuejs-datepicker'
 
-var prefix = 'static/data/263/FINAL_EDAY_2017263_T'
-var filePrefix = '263/FINAL_EDAY_2017263_T'
 
-var tile00 = { file: filePrefix + '060.tif', tiff: prefix+'060.tif', png: prefix+'060.png', bounds: {west: -15, south: 30, east: 0, north: 45} }
-var tile01 = { file: filePrefix + '061.tif', tiff: prefix+'061.tif', png: prefix+'061.png', bounds: {west: 0, south: 30, east: 15, north: 45} }
-var tile02 = { file: filePrefix + '062.tif', tiff: prefix+'062.tif', png: prefix+'062.png', bounds: {west: 15, south: 30, east: 30, north: 45} }
-var tile03 = { file: filePrefix + '063.tif', tiff: prefix+'063.tif', png: prefix+'063.png', bounds: {west: 30, south: 30, east: 45, north: 45} }
-var tile04 = { file: filePrefix + '064.tif', tiff: prefix+'064.tif', png: prefix+'064.png', bounds: {west: 45, south: 30, east: 60, north: 45} }
+function makeDays(ds, fileNum){
+  var days = {}
+  ds.forEach(function(d){
+    var date = new Date('2017-01-01T00:00:00')
+    date.setDate(date.getDate() + parseInt(d))
+    var day = { date:  DateForm(date, 'isoDate')}
+    day.png = 'static/data/' + d + '/FINAL_EDAY_2017' + d + '_T' + fileNum + '.png'
+    day.tif = 'static/data/' + d + '/FINAL_EDAY_2017' + d + '_T' + fileNum + '.tif'
+    days[d] = day
+  })
+  return days
+}
 
-var tile10 = { file: filePrefix + '084.tif', tiff: prefix+'084.tif', png: prefix+'084.png', bounds: {west: -15, south: 15, east: 0, north: 30} }
-var tile11 = { file: filePrefix + '085.tif', tiff: prefix+'085.tif', png: prefix+'085.png', bounds: {west: 0, south: 15, east: 15, north: 30} }
-var tile12 = { file: filePrefix + '086.tif', tiff: prefix+'086.tif', png: prefix+'086.png', bounds: {west: 15, south: 15, east: 30, north: 30} }
-var tile13 = { file: filePrefix + '087.tif', tiff: prefix+'087.tif', png: prefix+'087.png', bounds: {west: 30, south: 15, east: 45, north: 30} }
-var tile14 = { file: filePrefix + '088.tif', tiff: prefix+'088.tif', png: prefix+'088.png', bounds: {west: 45, south: 15, east: 60, north: 30} }
+var minDay = new Date('2017-01-01T00:00:00')
+minDay.setDate(minDay.getDate() + 263)
 
-var tile20 = { file: filePrefix + '108.tif', tiff: prefix+'108.tif', png: prefix+'108.png', bounds: {west: -15, south: 0, east: 0, north: 15} }
-var tile21 = { file: filePrefix + '109.tif', tiff: prefix+'109.tif', png: prefix+'109.png', bounds: {west: 0, south: 0, east: 15, north: 15} }
-var tile22 = { file: filePrefix + '110.tif', tiff: prefix+'110.tif', png: prefix+'110.png', bounds: {west: 15, south: 0, east: 30, north: 15} }
-var tile23 = { file: filePrefix + '111.tif', tiff: prefix+'111.tif', png: prefix+'111.png', bounds: {west: 30, south: 0, east: 45, north: 15} }
-var tile24 = { file: filePrefix + '112.tif', tiff: prefix+'112.tif', png: prefix+'112.png', bounds: {west: 45, south: 0, east: 60, north: 15} }
+var maxDay = new Date('2017-01-01T00:00:00')
+maxDay.setDate(maxDay.getDate() + 265)
+
+var tile00 = { bounds: {west: -15, south: 30, east: 0, north: 45}, days: makeDays(['263', '264', '265'], '060') }
+var tile01 = { bounds: {west: 0, south: 30, east: 15, north: 45}, days: makeDays(['263', '264', '265'], '061') }
+var tile02 = { bounds: {west: 15, south: 30, east: 30, north: 45}, days: makeDays(['263', '264', '265'], '062') }
+var tile03 = { bounds: {west: 30, south: 30, east: 45, north: 45}, days: makeDays(['263', '264', '265'], '063') }
+var tile04 = { bounds: {west: 45, south: 30, east: 60, north: 45}, days: makeDays(['263', '264', '265'], '064') }
+
+var tile10 = { bounds: {west: -15, south: 15, east: 0, north: 30}, days: makeDays(['263', '264', '265'], '084') }
+var tile11 = { bounds: {west: 0, south: 15, east: 15, north: 30}, days: makeDays(['263', '264', '265'], '085') }
+var tile12 = { bounds: {west: 15, south: 15, east: 30, north: 30}, days: makeDays(['263', '264', '265'], '086') }
+var tile13 = { bounds: {west: 30, south: 15, east: 45, north: 30}, days: makeDays(['263', '264', '265'], '087') }
+var tile14 = { bounds: {west: 45, south: 15, east: 60, north: 30}, days: makeDays(['263', '264', '265'], '088') }
+
+var tile20 = { bounds: {west: -15, south: 0, east: 0, north: 15}, days: makeDays(['263', '264', '265'], '108') }
+var tile21 = { bounds: {west: 0, south: 0, east: 15, north: 15}, days: makeDays(['263', '264', '265'], '109') }
+var tile22 = { bounds: {west: 15, south: 0, east: 30, north: 15}, days: makeDays(['263', '264', '265'], '110') }
+var tile23 = { bounds: {west: 30, south: 0, east: 45, north: 15}, days: makeDays(['263', '264', '265'], '111') }
+var tile24 = { bounds: {west: 45, south: 0, east: 60, north: 15}, days: makeDays(['263', '264', '265'], '112') }
 
 var tileMatrix = [
   [tile00, tile01, tile02, tile03, tile04],
@@ -150,8 +195,13 @@ tileMatrix.forEach(function(row){
 })
 
 
+
+
 export default {
   name: 'main-window',
+  components: {
+    Datepicker
+  },
   data () {
     return {
       center: {lat: 22.5, lng: 22.5},
@@ -162,10 +212,13 @@ export default {
       allTiles: allTiles,
       tileOptions: {strokeWeight: 0.5, fillOpacity: 0.2},
       rectBounds: null,
-      rectOptions: {strokeColor: '#FF0000', fillColor: '#FF0000'},
-      windowWidth: 1000,
+      rectOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', zIndex: 2},
+      imageSize: 300,
       showTilesOnImage: true,
-      showSelectionOnImage: true
+      showSelectionOnImage: true,
+      maxWindow: [minDay, maxDay],
+      pickRange: false,
+      dateWindow: [minDay, minDay]
     }
   },
   computed: {
@@ -191,12 +244,6 @@ export default {
       }
       return rm
     },
-    imageSize () {
-      if(!this.rectTileMatrix || !this.rectTileMatrix[0] || !this.rectTileMatrix[0].length){
-        return 0
-      }
-      return Math.round(this.windowWidth / this.rectTileMatrix[0].length)
-    },
     selectionOnImage () {
       if(!this.imageSize)
         return {top: 0, left: 0, height: 0, width: 0}
@@ -215,8 +262,29 @@ export default {
       var height = wholeHeight - topLeftDist[1] - bottomRightDist[1]
       var wholeWidth = lastRow.length * this.imageSize
       var width = wholeWidth - topLeftDist[0] - bottomRightDist[0]
-      console.log({top: topLeftDist[1], left: topLeftDist[0], height: height, width: width})
       return {top: topLeftDist[1], left: topLeftDist[0], height: height, width: width}
+    },
+    dateFromDisabled () {
+      if(!this.pickRange)
+        return {to: this.maxWindow[0], from: this.maxWindow[1]}
+      return {to: this.maxWindow[0], from: this.dateWindow[1]}
+    },
+    dateToDisabled () {
+      return {to: this.dateWindow[0], from: this.maxWindow[1]}
+    },
+    days () {
+      var from = Math.round((this.dateWindow[0] - new Date('2017-01-01T00:00:00')) / 86400000)
+      var to = Math.round((this.dateWindow[1] - new Date('2017-01-01T00:00:00')) / 86400000)
+      var days = []
+      if(!this.pickRange){
+        days = [from]
+      }else{
+        while(from <= to){
+          days.push(from)
+          from++
+        }
+      }
+      return days
     }
   },
   methods: {
@@ -280,6 +348,43 @@ export default {
       var distX = Math.round((Math.abs(p2[1] - p1[1])) * pixelPerLng)
       var distY = Math.round((Math.abs(p2[0] - p1[0])) * pixelPerLat)
       return [distX, distY]
+    },
+    dateFromSelected (date) {
+      var lastDay = this.dateWindow[1]
+      this.dateWindow = [date, lastDay]
+    },
+    dateToSelected (date) {
+      var firstDay = this.dateWindow[0]
+      this.dateWindow = [firstDay, date]
+    },
+    downloadAll () {
+      var vm = this
+      var elements = []
+      this.days.forEach(function(d){
+        for(var i=0;i<vm.rectTileMatrix.length;i++){
+          var row = vm.rectTileMatrix[i]
+          for(var j=0;j<row.length;j++){
+            var id = 'tile-' + d + '-' + i + '-' + j
+            var el = document.getElementById(id)
+            elements.push(el)
+          }
+        }
+      })
+      var i = 0
+      vm.downloadOne(elements, i)
+    },
+    downloadOne (elements, index) {
+      var vm = this
+      setTimeout(function(){
+        let el = elements[index]
+        el.click()
+        index++
+        if(index < elements.length){
+          setTimeout(function(){
+            vm.downloadOne(elements, index)
+          }, 500)
+        }
+      }, 500)
     }
   }
 }
@@ -326,6 +431,7 @@ export default {
 .images {
   position: relative;
   left: 20px;
+  margin-bottom: 20px;
 }
 
 .image-row {
@@ -336,7 +442,8 @@ export default {
 }
 
 .image-options {
-  text-align: center;
+  margin-left: 20px;
+  margin-bottom: 2px;
 }
 
 .image-checkbox {
@@ -361,6 +468,19 @@ export default {
 .selection-on-image {
   position: absolute;
   border: 2px solid red;
+}
+
+.date-inputs {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.date-label {
+  margin-left: 20px;
+}
+
+.download-button {
+  margin-left: 20px;
 }
 
 </style>
