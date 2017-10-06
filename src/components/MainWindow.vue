@@ -468,6 +468,7 @@ export default {
 .selection-on-image {
   position: absolute;
   border: 2px solid red;
+  pointer-events: none;
 }
 
 .date-inputs {
