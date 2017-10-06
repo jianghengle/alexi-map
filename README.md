@@ -1,6 +1,6 @@
 # alexi-map
 
-> A Vue.js project
+> A Vue.js project [Live demo](http://hcc-anvil-175-19.unl.edu:8080/).
 
 ## Build Setup
 
