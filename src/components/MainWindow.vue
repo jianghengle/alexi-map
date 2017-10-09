@@ -11,7 +11,7 @@
         @bounds_changed="mapBoundsChanged"
       >
         <gmap-rectangle
-          v-if="showTiles"
+          v-if="showGrid"
           v-for="(tile, idx) in allTiles"
           :key="'allTiles'+idx"
           :bounds="tile.bounds"
@@ -19,19 +19,40 @@
           @rightclick="drawRectangle"
         ></gmap-rectangle>
         <gmap-rectangle
-          v-if="rectBounds"
+          v-if="showSelectionOnMap && rectBounds"
           :bounds="rectBounds"
           :draggable="true"
           :editable="true"
           :options="rectOptions"
           @bounds_changed="rectBoundsChanged"
         ></gmap-rectangle>
+        <ground-overlay
+          v-if="showTiles"
+          v-for = "(t, i) in rectTileList"
+          :key="t.id"
+          :source="t.png"
+          :bounds="t.bounds"
+          :opacity="t.opacity">
+        </ground-overlay>
       </gmap-map>
       <div class="map-options">
-        <label class="checkbox">
-          <input type="checkbox" v-model="showTiles">
+        <label class="checkbox map-option">
+          <input type="checkbox" v-model="showGrid">
+          Show Grid
+        </label>
+        <label class="checkbox map-option">
+          <input type="checkbox" v-model="showSelectionOnMap" :disabled="!rectTileList.length">
+          Show Selection
+        </label>
+        <label class="checkbox map-option">
+          <input type="checkbox" v-model="showTiles" :disabled="!rectTileList.length">
           Show Tiles
         </label>
+        </label>
+        <span class="map-option">
+          <label class="map-option-label">Tile Opacity:</label>
+          <input class="input map-option-input" type="number" step="0.1" v-model.number="tileOpacity" :disabled="!rectTileList.length || !showTiles">
+        </span>
       </div>
     </div>
 
@@ -69,8 +90,8 @@
       <div v-if="rectBounds">
         <div class="image-options">
           <label class="checkbox image-checkbox">
-            <input type="checkbox" v-model="showTilesOnImage">
-            Show Tiles
+            <input type="checkbox" v-model="showGridOnImage">
+            Show Grid
           </label>
           <label class="checkbox image-checkbox">
             <input type="checkbox" v-model="showSelectionOnImage">
@@ -116,7 +137,7 @@
                 <img :src="cell.days[d].png"
                   :height="imageSize"
                   :width="imageSize"
-                  :class="{'tile-border': showTilesOnImage}">
+                  :class="{'tile-border': showGridOnImage}">
               </a>
             </div>
             <div class="selection-on-image"
@@ -207,14 +228,17 @@ export default {
       center: {lat: 22.5, lng: 22.5},
       zoom: 3,
       mapSize: null,
+      showGrid: false,
+      showSelectionOnMap: true,
       showTiles: false,
       tileMatrix: tileMatrix,
       allTiles: allTiles,
       tileOptions: {strokeWeight: 0.5, fillOpacity: 0.2},
+      tileOpacity: 0.3,
       rectBounds: null,
-      rectOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', zIndex: 2},
+      rectOptions: {strokeColor: '#FF0000', fillOpacity: 0.0, zIndex: 2},
       imageSize: 300,
-      showTilesOnImage: true,
+      showGridOnImage: true,
       showSelectionOnImage: true,
       maxWindow: [minDay, maxDay],
       pickRange: false,
@@ -243,6 +267,23 @@ export default {
         }
       }
       return rm
+    },
+    rectTileList () {
+      if(!this.rectTileMatrix) return []
+      var list = []
+      var days = this.days
+      var opacity = this.tileOpacity
+      this.rectTileMatrix.forEach(function(row){
+        row.forEach(function(cell){
+          var t = {bounds: cell.bounds}
+          t.png = cell.days[days[0]].png
+          t.opacity = opacity
+          t.id = t.png + opacity
+          list.push(t)
+        })
+      })
+      console.log(list)
+      return list
     },
     selectionOnImage () {
       if(!this.imageSize)
@@ -395,8 +436,23 @@ export default {
 
 .map-options {
   margin-top: 3px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   text-align: center;
+}
+
+.map-option {
+  display: inline-block;
+  margin-right: 20px;
+  margin-top: 5px;
+}
+
+.map-option-label {
+}
+
+.map-option-input {
+  width: 100px;
+  display: inline-block;
+  margin-top: -6px;
 }
 
 .buttons-row {

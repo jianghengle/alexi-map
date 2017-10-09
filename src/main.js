@@ -3,6 +3,10 @@
 import Vue from 'vue'
 import App from './App'
 
+import 'vue-awesome/icons/question'
+import Icon from 'vue-awesome/components/Icon'
+Vue.component('icon', Icon)
+
 import * as VueGoogleMaps from 'vue2-google-maps'
 Vue.use(VueGoogleMaps, {
   load: {
@@ -14,9 +18,25 @@ Vue.use(VueGoogleMaps, {
   }
 })
 
-import 'vue-awesome/icons/question'
-import Icon from 'vue-awesome/components/Icon'
-Vue.component('icon', Icon)
+Vue.component('ground-overlay', Vue.extend({
+  render() {
+    return '';
+  },
+  mixins: [VueGoogleMaps.MapElementMixin],
+  props: ['source', 'bounds', 'opacity'],
+  created() {},
+  deferredReady: function() {
+    this.$overlay = new google.maps.GroundOverlay(
+      this.source,
+      this.bounds
+    );
+    this.$overlay.setOpacity(this.opacity);
+    this.$overlay.setMap(this.$map);
+  },
+  destroyed: function() {
+    this.$overlay.setMap(null);
+  },
+}))
 
 Vue.config.productionTip = false
 
