@@ -6,7 +6,8 @@
         :center="center"
         :zoom="zoom"
         :options="{scrollwheel: false}"
-        style="width: 100%; height: 600px"
+        style="width: 100%"
+        :style="{'height': mapHeightPx}"
         @rightclick="drawRectangle"
         @bounds_changed="mapBoundsChanged"
       >
@@ -36,6 +37,10 @@
         </ground-overlay>
       </gmap-map>
       <div class="map-options">
+        <span class="map-option">
+          <label class="map-option-label">Map Height:</label>
+          <input class="input map-option-input" type="number" step="20" v-model.number="mapHeight">
+        </span>
         <label class="checkbox map-option">
           <input type="checkbox" v-model="showGrid">
           Show Grid
@@ -47,7 +52,6 @@
         <label class="checkbox map-option">
           <input type="checkbox" v-model="showTiles" :disabled="!rectTileList.length">
           Show Tiles
-        </label>
         </label>
         <span class="map-option">
           <label class="map-option-label">Tile Opacity:</label>
@@ -99,7 +103,7 @@
           </label>
           <span class="image-input">
             <label class="image-input-label">Image Size</label>
-            <input class="input image-input-input" type="number" v-model.number="imageSize">
+            <input class="input image-input-input" type="number" step="10" v-model.number="imageSize">
           </span>
           <span class="date-inputs">
             <label class="image-input-label" v-if="pickRange">Days</label>
@@ -225,6 +229,7 @@ export default {
   },
   data () {
     return {
+      mapHeight: 600,
       center: {lat: 22.5, lng: 22.5},
       zoom: 3,
       mapSize: null,
@@ -246,6 +251,9 @@ export default {
     }
   },
   computed: {
+    mapHeightPx () {
+      return this.mapHeight + 'px'
+    },
     rectTileMatrix () {
       if(!this.rectBounds)
         return null
@@ -282,7 +290,6 @@ export default {
           list.push(t)
         })
       })
-      console.log(list)
       return list
     },
     selectionOnImage () {
