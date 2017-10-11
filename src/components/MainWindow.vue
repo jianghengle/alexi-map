@@ -341,15 +341,15 @@ export default {
       var lng = e.latLng.lng()
       this.rectBounds = {
         north: lat,
-        south: lat - this.mapSize.lat / 10,
-        east: lng + this.mapSize.lng / 10,
+        south: lat - this.mapSize / 10,
+        east: lng + this.mapSize / 10,
         west: lng
       }
     },
     newRectangle () {
       var center = this.$refs.map.center
-      var latRadius = this.mapSize.lat / 20
-      var lngRadius = this.mapSize.lng / 20
+      var latRadius = this.mapSize / 20
+      var lngRadius = this.mapSize / 20
       this.rectBounds = {
         north: center.lat + latRadius,
         south: center.lat - latRadius,
@@ -361,10 +361,7 @@ export default {
       this.rectBounds = null
     },
     mapBoundsChanged (e) {
-      this.mapSize = {
-        lng: e.b.f - e.b.b,
-        lat: e.f.f - e.f.b
-      }
+      this.mapSize = e.f.f - e.f.b
     },
     rectBoundsChanged (e) {
       this.rectBounds = {
@@ -545,6 +542,7 @@ export default {
 
 .download-button {
   margin-left: 20px;
+  margin-bottom: 20px;
 }
 
 </style>
