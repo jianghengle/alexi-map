@@ -2,24 +2,31 @@
   <div id="app">
     <alexi-header></alexi-header>
     <main-window></main-window>
+    <alexi-footer></alexi-footer>
   </div>
 </template>
 
 <script>
 import AlexiHeader from './components/AlexiHeader'
 import MainWindow from './components/MainWindow'
+import AlexiFooter from './components/AlexiFooter'
 
 export default {
   name: 'app',
   components: {
     AlexiHeader,
-    MainWindow
+    MainWindow,
+    AlexiFooter
   }
 }
 </script>
 
 <style lang="scss">
 @import "~bulma";
+
+html {
+
+}
 
 body {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

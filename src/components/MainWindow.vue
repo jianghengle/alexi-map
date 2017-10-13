@@ -545,4 +545,8 @@ export default {
   margin-bottom: 20px;
 }
 
+.alexi-window {
+  margin-bottom: 100px;
+}
+
 </style>
