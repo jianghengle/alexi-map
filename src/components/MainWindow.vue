@@ -8,159 +8,138 @@
         :options="{scrollwheel: false}"
         style="width: 100%"
         :style="{'height': mapHeightPx}"
-        @rightclick="drawRectangle"
+        @rightclick="drawSelection"
         @bounds_changed="mapBoundsChanged"
       >
         <gmap-rectangle
-          v-if="showGrid"
-          v-for="(tile, idx) in allTiles"
-          :key="'allTiles'+idx"
+          v-if="showGrids"
+          v-for="(tile, idx) in tilesList"
+          :key="'tiles'+idx"
           :bounds="tile.bounds"
-          :options="tileOptions"
-          @rightclick="drawRectangle"
+          :options="gridOptions"
+          @rightclick="drawSelection"
         ></gmap-rectangle>
         <gmap-rectangle
-          v-if="showSelectionOnMap && rectBounds"
-          :bounds="rectBounds"
+          v-if="showSelection && selectionBounds"
+          :bounds="selectionBounds"
           :draggable="true"
           :editable="true"
-          :options="rectOptions"
-          @bounds_changed="rectBoundsChanged"
+          :options="selectionOptions"
+          @bounds_changed="selectionBoundsChanged"
         ></gmap-rectangle>
         <ground-overlay
           v-if="showTiles"
-          v-for = "(t, i) in rectTileList"
+          v-for = "(t, i) in selectionTileList"
           :key="t.id"
           :source="t.png"
           :bounds="t.bounds"
           :opacity="t.opacity">
         </ground-overlay>
       </gmap-map>
-      <div class="map-options">
-        <span class="map-option">
-          <label class="map-option-label">Map Height:</label>
+      <div class="map-options columns">
+        <div class="column">
+          <label class="checkbox map-option">
+            <input type="checkbox" v-model="showGrids">
+            Grids
+          </label>
+          &nbsp;&nbsp;
+          <label class="checkbox map-option" v-show="selectionTileList.length">
+            <input type="checkbox" v-model="showSelection">
+            Selection
+          </label>
+          &nbsp;
+          <label class="map-option" v-show="selectionTileList.length">
+            Tiles
+          </label>
+          <input class="input map-option-input opacity-input" type="number" step="0.1" v-model.number="tileOpacity"
+              :disabled="!showTiles"
+              v-show="selectionTileList.length">
+        </div>
+        <div class="column date-picker-column">
+          <span v-show="selectionTileList.length">
+            <a class="button" :disabled="!showTiles || day==263" @click="dayChanged(day-1)">
+              <span class="icon is-small">
+                <icon name="chevron-left"></icon>
+              </span>
+            </a>
+            <datepicker
+              wrapper-class="date-picker-wrapper"
+              input-class="date-picker-input"
+              format="yyyy-MM-dd"
+              :value="date"
+              :disabled="dateDisabled"
+              v-on:selected="dateSelected"
+              :disabled-picker="!showTiles">
+            </datepicker>
+            <a class="button" :disabled="!showTiles || day==265" @click="dayChanged(day+1)">
+              <span class="icon is-small">
+                <icon name="chevron-right"></icon>
+              </span>
+            </a>
+          </span>
+        </div>
+        <div class="column">
+          <label>Map Height</label>
           <input class="input map-option-input" type="number" step="20" v-model.number="mapHeight">
-        </span>
-        <label class="checkbox map-option">
-          <input type="checkbox" v-model="showGrid">
-          Show Grid
-        </label>
-        <label class="checkbox map-option">
-          <input type="checkbox" v-model="showSelectionOnMap" :disabled="!rectTileList.length">
-          Show Selection
-        </label>
-        <label class="checkbox map-option">
-          <input type="checkbox" v-model="showTiles" :disabled="!rectTileList.length">
-          Show Tiles
-        </label>
-        <span class="map-option">
-          <label class="map-option-label">Tile Opacity:</label>
-          <input class="input map-option-input" type="number" step="0.1" v-model.number="tileOpacity" :disabled="!rectTileList.length || !showTiles">
-        </span>
+        </div>
       </div>
     </div>
 
     <div class="alexi-window">
-      <div class="field is-grouped buttons-row">
-        <a class="button is-info rectangle-button" @click="newRectangle">
-          New Selection
-        </a>
-        <a class="button rectangle-button" @click="clearRectangle">
-          Clear
-        </a>
-        <span class="field buttons-row" v-if="rectBounds">
-          <span class="coordinate selection-label">
-            Selection:
-          </span>
-          <span class="coordinate">
-            <label class="coordinate-label">North</label>
-            <input class="input coordinate-input" type="number" v-model.number="rectBounds.north">
-          </span>
-          <span class="coordinate">
-            <label class="coordinate-label">South</label>
-            <input class="input coordinate-input" type="number" v-model.number="rectBounds.south">
-          </span>
-          <span class="coordinate">
-            <label class="coordinate-label">East</label>
-            <input class="input coordinate-input" type="number" v-model.number="rectBounds.east">
-          </span>
-          <span class="coordinate">
-            <label class="coordinate-label">West</label>
-            <input class="input coordinate-input" type="number" v-model.number="rectBounds.west">
-          </span>
-        </span>
-      </div>
-
-      <div v-if="rectBounds">
-        <div class="image-options">
-          <label class="checkbox image-checkbox">
-            <input type="checkbox" v-model="showGridOnImage">
-            Show Grid
-          </label>
-          <label class="checkbox image-checkbox">
-            <input type="checkbox" v-model="showSelectionOnImage">
-            Show Selection
-          </label>
-          <span class="image-input">
-            <label class="image-input-label">Image Size</label>
-            <input class="input image-input-input" type="number" step="10" v-model.number="imageSize">
-          </span>
-          <span class="date-inputs">
-            <label class="image-input-label" v-if="pickRange">Days</label>
-            <label class="image-input-label" v-if="!pickRange">Day</label>
-            <datepicker
-              wrapper-class="date-picker-wrapper"
-              input-class="date-picker-input"
-              format="yyyy-MM-dd"
-              :value="dateWindow[0]"
-              :disabled="dateFromDisabled"
-              v-on:selected="dateFromSelected">
-            </datepicker>
-            <datepicker
-              v-if="pickRange"
-              wrapper-class="date-picker-wrapper"
-              input-class="date-picker-input"
-              format="yyyy-MM-dd"
-              :value="dateWindow[1]"
-              :disabled="dateToDisabled"
-              v-on:selected="dateToSelected">
-            </datepicker>
-            <label class="checkbox image-checkbox">
-              <input type="checkbox" v-model="pickRange">
-              Range
-            </label>
+      <div class="buttons-row columns">
+        <div class="column is-one-quarter">
+          <a class="button is-info" @click="newSelection">
+            New Selection
+          </a>
+        </div>
+        <div class="column">
+          <span class="field" v-if="selectionBounds">
+            <span class="coordinate">
+              <label class="coordinate-label">N</label>
+              <input class="input coordinate-input" type="number" v-model.number="selectionBounds.north">
+            </span>
+            <span class="coordinate">
+              <label class="coordinate-label">S</label>
+              <input class="input coordinate-input" type="number" v-model.number="selectionBounds.south">
+            </span>
+            <span class="coordinate">
+              <label class="coordinate-label">E</label>
+              <input class="input coordinate-input" type="number" v-model.number="selectionBounds.east">
+            </span>
+            <span class="coordinate">
+              <label class="coordinate-label">W</label>
+              <input class="input coordinate-input" type="number" v-model.number="selectionBounds.west">
+            </span>
           </span>
         </div>
-        <div v-for="(d, k) in days" :key="'d' + d">
-          <div class="date-label">{{rectTileMatrix[0][0].days[d].date}}</div>
-          <div class="images">
-            <div v-for="(row, i) in rectTileMatrix" :key="d + 'rr' + i" class="image-row">
-              <a v-for="(cell, j) in row" :key="d + 'rc' + i + '-' + j"
-                :href="cell.days[d].tif"
-                :id="'tile-' + d + '-' + i + '-' + j">
-                <img :src="cell.days[d].png"
-                  :height="imageSize"
-                  :width="imageSize"
-                  :class="{'tile-border': showGridOnImage}">
-              </a>
-            </div>
-            <div class="selection-on-image"
-              v-show="showSelectionOnImage"
-              :style="{
-                'top': selectionOnImage.top + 'px',
-                'left': selectionOnImage.left + 'px',
-                'height': selectionOnImage.height + 'px',
-                'width': selectionOnImage.width + 'px'
-              }">
-            </div>
-          </div>
-        </div>
-        <div class="download-button">
-          <a class="button is-info rectangle-button" @click="downloadAll">
-            Download All {{days.length * rectTileMatrix.length * rectTileMatrix[0].length}} Tiles
+        <div class="column is-one-quarter">
+          <a class="button" @click="clearSelection">
+            Clear Selection
           </a>
         </div>
       </div>
+
+      <div v-if="selectionBounds">
+        <image-box v-for="(box, i) in boxes" :key="'box-'+i"
+          :idx="i"
+          :selection-tiles="selectionTiles"
+          :day="box.day"
+          :show-grids="showGrids"
+          :show-selection="showSelection"
+          :max-date-window="maxDateWindow"
+          @box-day-changed="boxDayChanged"
+          @box-deleted="imageBoxDeleted">
+        </image-box>
+      </div>
+
+      <div class="buttons-row columns" v-if="selectionBounds">
+        <div class="column">
+          <a class="button is-info" @click="addImageBox">
+            Add Image Box
+          </a>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -169,6 +148,7 @@
 <script>
 import DateForm from 'dateformat'
 import Datepicker from 'vuejs-datepicker'
+import ImageBox from './ImageBox'
 
 
 function makeDays(ds, fileNum){
@@ -177,6 +157,7 @@ function makeDays(ds, fileNum){
     var date = new Date('2017-01-01T00:00:00')
     date.setDate(date.getDate() + parseInt(d))
     var day = { date:  DateForm(date, 'isoDate')}
+    day.id = day.date + '-' + fileNum
     day.png = 'static/data/' + d + '/FINAL_EDAY_2017' + d + '_T' + fileNum + '.png'
     day.tif = 'static/data/' + d + '/FINAL_EDAY_2017' + d + '_T' + fileNum + '.tif'
     days[d] = day
@@ -208,15 +189,15 @@ var tile22 = { bounds: {west: 15, south: 0, east: 30, north: 15}, days: makeDays
 var tile23 = { bounds: {west: 30, south: 0, east: 45, north: 15}, days: makeDays(['263', '264', '265'], '111') }
 var tile24 = { bounds: {west: 45, south: 0, east: 60, north: 15}, days: makeDays(['263', '264', '265'], '112') }
 
-var tileMatrix = [
+var tiles = [
   [tile00, tile01, tile02, tile03, tile04],
   [tile10, tile11, tile12, tile13, tile14],
   [tile20, tile21, tile22, tile23, tile24]
 ]
 
-var allTiles = []
-tileMatrix.forEach(function(row){
-  allTiles = allTiles.concat(row)
+var tilesList = []
+tiles.forEach(function(row){
+  tilesList = tilesList.concat(row)
 })
 
 
@@ -225,7 +206,8 @@ tileMatrix.forEach(function(row){
 export default {
   name: 'main-window',
   components: {
-    Datepicker
+    Datepicker,
+    ImageBox
   },
   data () {
     return {
@@ -233,58 +215,55 @@ export default {
       center: {lat: 22.5, lng: 22.5},
       zoom: 3,
       mapSize: null,
-      showGrid: false,
-      showSelectionOnMap: true,
-      showTiles: false,
-      tileMatrix: tileMatrix,
-      allTiles: allTiles,
-      tileOptions: {strokeWeight: 0.5, fillOpacity: 0.2},
-      tileOpacity: 0.3,
-      rectBounds: null,
-      rectOptions: {strokeColor: '#FF0000', fillOpacity: 0.0, zIndex: 2},
-      imageSize: 300,
-      showGridOnImage: true,
-      showSelectionOnImage: true,
-      maxWindow: [minDay, maxDay],
-      pickRange: false,
-      dateWindow: [minDay, minDay]
+      showGrids: false,
+      gridOptions: {strokeWeight: 0.4, fillOpacity: 0.1},
+      showSelection: false,
+      selectionBounds: {north: 40, south: 5, east: 55, west: -10},
+      selectionOptions: {strokeColor: '#FF0000', fillOpacity: 0.0, zIndex: 2},
+      showTiles: true,
+      tileOpacity: 0.6,
+      tiles: tiles,
+      tilesList: tilesList,
+      maxDateWindow: [minDay, maxDay],
+      boxes: [{day: 263}]
     }
   },
   computed: {
     mapHeightPx () {
       return this.mapHeight + 'px'
     },
-    rectTileMatrix () {
-      if(!this.rectBounds)
+    selectionTiles () {
+      if(!this.selectionBounds)
         return null
-      var rm = []
-      for(var i=0;i<this.tileMatrix.length;i++){
-        var row = this.tileMatrix[i]
-        var rr = []
+      var selectTiles = []
+      for(var i=0;i<this.tiles.length;i++){
+        var row = this.tiles[i]
+        var selectionRow = []
         for(var j=0;j<row.length;j++){
           var tile = row[j]
-          var overlap = this.rectangleOverlap(tile.bounds, this.rectBounds)
+          var overlap = this.rectangleOverlap(tile.bounds, this.selectionBounds)
           if(overlap){
-            var rt = Object.assign({}, tile)
-            rt.overlap = overlap
-            rr.push(rt)
+            var selectionTile = Object.assign({}, tile)
+            selectionTile.overlap = overlap
+            selectionRow.push(selectionTile)
           }
         }
-        if(rr.length){
-          rm.push(rr)
+        if(selectionRow.length){
+          selectTiles.push(selectionRow)
         }
       }
-      return rm
+      return selectTiles
     },
-    rectTileList () {
-      if(!this.rectTileMatrix) return []
+    selectionTileList () {
+      if(!this.selectionTiles) return []
+      if(!this.boxes.length) return []
+      var day = this.boxes[0].day
       var list = []
-      var days = this.days
       var opacity = this.tileOpacity
-      this.rectTileMatrix.forEach(function(row){
+      this.selectionTiles.forEach(function(row){
         row.forEach(function(cell){
           var t = {bounds: cell.bounds}
-          t.png = cell.days[days[0]].png
+          t.png = cell.days[day].png
           t.opacity = opacity
           t.id = t.png + opacity
           list.push(t)
@@ -292,79 +271,50 @@ export default {
       })
       return list
     },
-    selectionOnImage () {
-      if(!this.imageSize)
-        return {top: 0, left: 0, height: 0, width: 0}
-      var topLeftTile = this.rectTileMatrix[0][0]
-      var tlp2 = [topLeftTile.bounds.north, topLeftTile.bounds.west]
-      var tlp1 = [topLeftTile.overlap.north, topLeftTile.overlap.west]
-      var topLeftDist = this.distanceInPixel(topLeftTile, tlp1, tlp2)
-
-      var lastRow = this.rectTileMatrix[this.rectTileMatrix.length - 1]
-      var bottomRightTile = lastRow[lastRow.length - 1]
-      var brp1 = [bottomRightTile.overlap.south, bottomRightTile.overlap.east]
-      var brp2 = [bottomRightTile.bounds.south, bottomRightTile.bounds.east]
-      var bottomRightDist = this.distanceInPixel(bottomRightTile, brp1, brp2)
-
-      var wholeHeight = this.rectTileMatrix.length * this.imageSize
-      var height = wholeHeight - topLeftDist[1] - bottomRightDist[1]
-      var wholeWidth = lastRow.length * this.imageSize
-      var width = wholeWidth - topLeftDist[0] - bottomRightDist[0]
-      return {top: topLeftDist[1], left: topLeftDist[0], height: height, width: width}
+    day () {
+      if(!this.boxes.length) return null
+      return this.boxes[0].day
     },
-    dateFromDisabled () {
-      if(!this.pickRange)
-        return {to: this.maxWindow[0], from: this.maxWindow[1]}
-      return {to: this.maxWindow[0], from: this.dateWindow[1]}
+    date () {
+      if(!this.boxes.length) return null
+      var date = new Date('2017-01-01T00:00:00')
+      date.setDate(date.getDate() + parseInt(this.day))
+      return date
     },
-    dateToDisabled () {
-      return {to: this.dateWindow[0], from: this.maxWindow[1]}
-    },
-    days () {
-      var from = Math.round((this.dateWindow[0] - new Date('2017-01-01T00:00:00')) / 86400000)
-      var to = Math.round((this.dateWindow[1] - new Date('2017-01-01T00:00:00')) / 86400000)
-      var days = []
-      if(!this.pickRange){
-        days = [from]
-      }else{
-        while(from <= to){
-          days.push(from)
-          from++
-        }
-      }
-      return days
+    dateDisabled () {
+      return {to: this.maxDateWindow[0], from: this.maxDateWindow[1]}
     }
   },
   methods: {
-    drawRectangle (e) {
+    drawSelection (e) {
       var lat = e.latLng.lat()
       var lng = e.latLng.lng()
-      this.rectBounds = {
+      this.selectionBounds = {
         north: lat,
         south: lat - this.mapSize / 10,
         east: lng + this.mapSize / 10,
         west: lng
       }
     },
-    newRectangle () {
+    newSelection () {
       var center = this.$refs.map.center
       var latRadius = this.mapSize / 20
       var lngRadius = this.mapSize / 20
-      this.rectBounds = {
+      this.selectionBounds = {
         north: center.lat + latRadius,
         south: center.lat - latRadius,
         east: center.lng + lngRadius,
         west: center.lng - lngRadius
       }
     },
-    clearRectangle () {
-      this.rectBounds = null
+    clearSelection () {
+      this.selectionBounds = null
     },
     mapBoundsChanged (e) {
       this.mapSize = e.f.f - e.f.b
     },
-    rectBoundsChanged (e) {
-      this.rectBounds = {
+    selectionBoundsChanged (e) {
+      this.selectionBounds = {
         north: e.f.f,
         south: e.f.b,
         east: e.b.f,
@@ -387,162 +337,69 @@ export default {
         return null
       return {north: latOverlap[1], south: latOverlap[0], east: lngOverlap[1], west: lngOverlap[0]}
     },
-    distanceInPixel (tile, p1, p2) {
-      var pixelPerLat = this.imageSize / (tile.bounds.north - tile.bounds.south)
-      var pixelPerLng = this.imageSize / (tile.bounds.east - tile.bounds.west)
-      var distX = Math.round((Math.abs(p2[1] - p1[1])) * pixelPerLng)
-      var distY = Math.round((Math.abs(p2[0] - p1[0])) * pixelPerLat)
-      return [distX, distY]
+    dateSelected (date) {
+      var day = Math.round((date - new Date('2017-01-01T00:00:00')) / 86400000)
+      this.boxDayChanged({idx: 0, day: day})
     },
-    dateFromSelected (date) {
-      var lastDay = this.dateWindow[1]
-      this.dateWindow = [date, lastDay]
+    boxDayChanged (boxDay) {
+      var idx = boxDay.idx
+      if(idx < this.boxes.length)
+        this.boxes[idx].day = boxDay.day
     },
-    dateToSelected (date) {
-      var firstDay = this.dateWindow[0]
-      this.dateWindow = [firstDay, date]
+    dayChanged (day) {
+      if(this.showTiles && this.boxes.length){
+        this.boxes[0].day = day
+      }
     },
-    downloadAll () {
-      var vm = this
-      var elements = []
-      this.days.forEach(function(d){
-        for(var i=0;i<vm.rectTileMatrix.length;i++){
-          var row = vm.rectTileMatrix[i]
-          for(var j=0;j<row.length;j++){
-            var id = 'tile-' + d + '-' + i + '-' + j
-            var el = document.getElementById(id)
-            elements.push(el)
-          }
-        }
-      })
-      var i = 0
-      vm.downloadOne(elements, i)
+    addImageBox () {
+      this.boxes.push({day: 263})
     },
-    downloadOne (elements, index) {
-      var vm = this
-      setTimeout(function(){
-        let el = elements[index]
-        el.click()
-        index++
-        if(index < elements.length){
-          setTimeout(function(){
-            vm.downloadOne(elements, index)
-          }, 500)
-        }
-      }, 500)
+    imageBoxDeleted (idx) {
+      this.boxes.splice(idx, 1)
     }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
 
 .map-options {
-  margin-top: 3px;
-  margin-bottom: 10px;
+  margin-top: 0px;
   text-align: center;
 }
 
-.map-option {
-  display: inline-block;
-  margin-right: 20px;
-  margin-top: 5px;
-}
-
-.map-option-label {
-}
-
 .map-option-input {
-  width: 100px;
+  width: 80px;
   display: inline-block;
   margin-top: -6px;
 }
 
-.buttons-row {
-  padding-left: 20px;
+.opacity-input {
+  width: 60px;
 }
 
-.rectangle-button {
-  margin-right: 20px;
+.buttons-row {
+  text-align: center;
 }
 
 .coordinate {
   display: inline-block;
   margin-right: 20px;
+
+  .coordinate-label {
+    position: relative;
+    top: 6px;
+  }
+
+  .coordinate-input {
+    width: 66px;
+    display: inline-block;
+  }
 }
 
-.selection-label {
-  position: relative;
-  top: 6px;
-  font-weight: bold;
-}
-
-.coordinate-label {
-  position: relative;
-  top: 6px;
-}
-
-.coordinate-input {
-  width: 100px;
-  display: inline-block;
-}
-
-.images {
-  position: relative;
-  left: 20px;
-  margin-bottom: 20px;
-}
-
-.image-row {
-  margin-bottom: -7px;
-  padding: 0px;
-  white-space: nowrap;
-  overflow: auto;
-}
-
-.image-options {
-  margin-left: 20px;
-  margin-bottom: 2px;
-}
-
-.image-checkbox {
-  margin-top: 12px;
-  margin-right: 20px;
-}
-
-.image-input {
-  margin-top: 2px;
-}
-
-.image-input-input {
-  width: 100px;
-  display: inline-block;
-  margin-top: 2px;
-}
-
-.tile-border {
-  border: 1px solid gray;
-}
-
-.selection-on-image {
-  position: absolute;
-  border: 2px solid red;
-  pointer-events: none;
-}
-
-.date-inputs {
-  display: inline-block;
-  margin-left: 20px;
-}
-
-.date-label {
-  margin-left: 20px;
-}
-
-.download-button {
-  margin-left: 20px;
-  margin-bottom: 20px;
+.date-picker-column {
+  padding-top: 6px;
 }
 
 .alexi-window {

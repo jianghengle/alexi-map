@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 
 import 'vue-awesome/icons/question'
+import 'vue-awesome/icons/chevron-left'
+import 'vue-awesome/icons/chevron-right'
 import Icon from 'vue-awesome/components/Icon'
 Vue.component('icon', Icon)
 

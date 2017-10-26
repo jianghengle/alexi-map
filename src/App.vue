@@ -42,6 +42,7 @@ body {
 .date-picker-input{
   cursor: pointer;
   height: 35px;
+  width: 120px;
   text-align: center;
   font-size: 1rem;
 }
