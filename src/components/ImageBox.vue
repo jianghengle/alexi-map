@@ -29,7 +29,7 @@
           </a>
         </div>
         <div class="column">
-          <a class="button is-info">
+          <a class="button is-info" @click="downloadAll">
             Download Images
           </a>
           <a class="button delete delete-button" @click="deleteBox" v-if="idx != 0"></a>
@@ -207,33 +207,37 @@ export default {
       this.$emit('box-day-changed', boxDay)
     },
     downloadAll () {
-      var vm = this
-      var elements = []
-      this.days.forEach(function(d){
-        for(var i=0;i<vm.rectTileMatrix.length;i++){
-          var row = vm.rectTileMatrix[i]
-          for(var j=0;j<row.length;j++){
-            var id = 'tile-' + d + '-' + i + '-' + j
-            var el = document.getElementById(id)
-            elements.push(el)
-          }
+      var urls = []
+      for(var i=0;i<this.images.length;i++){
+        for(var j=0;j<this.images[i].length;j++){
+          var image = this.images[i][j]
+          urls.push(image.png)
+          urls.push(image.tif)
         }
-      })
-      var i = 0
-      vm.downloadOne(elements, i)
+      }
+      this.downloadOne(urls, 0)
     },
-    downloadOne (elements, index) {
+    downloadOne (urls, index) {
       var vm = this
       setTimeout(function(){
-        let el = elements[index]
-        el.click()
+        var url = urls[index]
+        vm.downloadUrl(url)
         index++
-        if(index < elements.length){
+        if(index < urls.length){
           setTimeout(function(){
-            vm.downloadOne(elements, index)
+            vm.downloadOne(urls, index)
           }, 500)
         }
       }, 500)
+    },
+    downloadUrl (url) {
+      var dl = document.createElement('a')
+      dl.setAttribute('href', url)
+      dl.setAttribute('visibility', 'hidden')
+      dl.setAttribute('display', 'none')
+      dl.setAttribute('download', '')
+      document.body.appendChild(dl)
+      dl.click()
     },
     deleteBox () {
       this.$emit('box-deleted', this.idx)
