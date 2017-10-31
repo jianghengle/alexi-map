@@ -60,8 +60,8 @@
           <div class="color-band-container" :style="{'left': (width + 30) + 'px'}">
             <div class="color-band" :style="{'height': height + 'px'}">
             </div>
-            <div class="color-annotation" v-for="a in colorAnnotations" :style="{'top': a.top + 'px'}">
-              {{a.value}}
+            <div class="color-annotation" v-for="(a, i) in colorAnnotations" :style="{'top': a.top + 'px'}">
+              {{a.value}}&nbsp;<span v-if="i==0">mm/day</span>
             </div>
           </div>
           <div class="y-annotation" v-if="showGrids" v-for="a in yAnnotations" :style="{'top': a.top + 'px'}">
