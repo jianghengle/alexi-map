@@ -57,7 +57,7 @@
         </div>
         <div class="column date-picker-column">
           <span v-show="selectionTileList.length">
-            <a class="button" :disabled="!showTiles || day==263" @click="dayChanged(day-1)">
+            <a class="button" :disabled="!showTiles || day==308" @click="dayChanged(day-1)">
               <span class="icon is-small">
                 <icon name="chevron-left"></icon>
               </span>
@@ -71,7 +71,7 @@
               v-on:selected="dateSelected"
               :disabled-picker="!showTiles">
             </datepicker>
-            <a class="button" :disabled="!showTiles || day==265" @click="dayChanged(day+1)">
+            <a class="button" :disabled="!showTiles || day==314" @click="dayChanged(day+1)">
               <span class="icon is-small">
                 <icon name="chevron-right"></icon>
               </span>
@@ -166,28 +166,30 @@ function makeDays(ds, fileNum){
 }
 
 var minDay = new Date('2017-01-01T00:00:00')
-minDay.setDate(minDay.getDate() + 263)
+minDay.setDate(minDay.getDate() + 308)
 
 var maxDay = new Date('2017-01-01T00:00:00')
-maxDay.setDate(maxDay.getDate() + 265)
+maxDay.setDate(maxDay.getDate() + 314)
 
-var tile00 = { bounds: {west: -15, south: 30, east: 0, north: 45}, days: makeDays(['263', '264', '265'], '060') }
-var tile01 = { bounds: {west: 0, south: 30, east: 15, north: 45}, days: makeDays(['263', '264', '265'], '061') }
-var tile02 = { bounds: {west: 15, south: 30, east: 30, north: 45}, days: makeDays(['263', '264', '265'], '062') }
-var tile03 = { bounds: {west: 30, south: 30, east: 45, north: 45}, days: makeDays(['263', '264', '265'], '063') }
-var tile04 = { bounds: {west: 45, south: 30, east: 60, north: 45}, days: makeDays(['263', '264', '265'], '064') }
+var allDays = ['308', '309', '310', '311', '312', '313', '314']
 
-var tile10 = { bounds: {west: -15, south: 15, east: 0, north: 30}, days: makeDays(['263', '264', '265'], '084') }
-var tile11 = { bounds: {west: 0, south: 15, east: 15, north: 30}, days: makeDays(['263', '264', '265'], '085') }
-var tile12 = { bounds: {west: 15, south: 15, east: 30, north: 30}, days: makeDays(['263', '264', '265'], '086') }
-var tile13 = { bounds: {west: 30, south: 15, east: 45, north: 30}, days: makeDays(['263', '264', '265'], '087') }
-var tile14 = { bounds: {west: 45, south: 15, east: 60, north: 30}, days: makeDays(['263', '264', '265'], '088') }
+var tile00 = { bounds: {west: -15, south: 30, east: 0, north: 45}, days: makeDays(allDays, '060') }
+var tile01 = { bounds: {west: 0, south: 30, east: 15, north: 45}, days: makeDays(allDays, '061') }
+var tile02 = { bounds: {west: 15, south: 30, east: 30, north: 45}, days: makeDays(allDays, '062') }
+var tile03 = { bounds: {west: 30, south: 30, east: 45, north: 45}, days: makeDays(allDays, '063') }
+var tile04 = { bounds: {west: 45, south: 30, east: 60, north: 45}, days: makeDays(allDays, '064') }
 
-var tile20 = { bounds: {west: -15, south: 0, east: 0, north: 15}, days: makeDays(['263', '264', '265'], '108') }
-var tile21 = { bounds: {west: 0, south: 0, east: 15, north: 15}, days: makeDays(['263', '264', '265'], '109') }
-var tile22 = { bounds: {west: 15, south: 0, east: 30, north: 15}, days: makeDays(['263', '264', '265'], '110') }
-var tile23 = { bounds: {west: 30, south: 0, east: 45, north: 15}, days: makeDays(['263', '264', '265'], '111') }
-var tile24 = { bounds: {west: 45, south: 0, east: 60, north: 15}, days: makeDays(['263', '264', '265'], '112') }
+var tile10 = { bounds: {west: -15, south: 15, east: 0, north: 30}, days: makeDays(allDays, '084') }
+var tile11 = { bounds: {west: 0, south: 15, east: 15, north: 30}, days: makeDays(allDays, '085') }
+var tile12 = { bounds: {west: 15, south: 15, east: 30, north: 30}, days: makeDays(allDays, '086') }
+var tile13 = { bounds: {west: 30, south: 15, east: 45, north: 30}, days: makeDays(allDays, '087') }
+var tile14 = { bounds: {west: 45, south: 15, east: 60, north: 30}, days: makeDays(allDays, '088') }
+
+var tile20 = { bounds: {west: -15, south: 0, east: 0, north: 15}, days: makeDays(allDays, '108') }
+var tile21 = { bounds: {west: 0, south: 0, east: 15, north: 15}, days: makeDays(allDays, '109') }
+var tile22 = { bounds: {west: 15, south: 0, east: 30, north: 15}, days: makeDays(allDays, '110') }
+var tile23 = { bounds: {west: 30, south: 0, east: 45, north: 15}, days: makeDays(allDays, '111') }
+var tile24 = { bounds: {west: 45, south: 0, east: 60, north: 15}, days: makeDays(allDays, '112') }
 
 var tiles = [
   [tile00, tile01, tile02, tile03, tile04],
@@ -225,7 +227,7 @@ export default {
       tiles: tiles,
       tilesList: tilesList,
       maxDateWindow: [minDay, maxDay],
-      boxes: [{day: 263}]
+      boxes: [{day: 314}]
     }
   },
   computed: {
@@ -352,7 +354,7 @@ export default {
       }
     },
     addImageBox () {
-      this.boxes.push({day: 263})
+      this.boxes.push({day: 314})
     },
     imageBoxDeleted (idx) {
       this.boxes.splice(idx, 1)

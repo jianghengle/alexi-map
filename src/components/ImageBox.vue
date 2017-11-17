@@ -9,7 +9,7 @@
           </span>
         </div>
         <div class="column">
-          <a class="button" :disabled="day==263" @click="changeDay(day-1)">
+          <a class="button" :disabled="day==308" @click="changeDay(day-1)">
             <span class="icon is-small">
               <icon name="chevron-left"></icon>
             </span>
@@ -22,7 +22,7 @@
             :disabled="dateDisabled"
             v-on:selected="dateSelected">
           </datepicker>
-          <a class="button" :disabled="day==265" @click="changeDay(day+1)">
+          <a class="button" :disabled="day==314" @click="changeDay(day+1)">
             <span class="icon is-small">
               <icon name="chevron-right"></icon>
             </span>
@@ -202,7 +202,7 @@ export default {
       this.changeDay(day)
     },
     changeDay (day) {
-      if(day < 263 || day > 265) return
+      if(day < 308 || day > 314) return
       var boxDay = {idx: this.idx, day: day}
       this.$emit('box-day-changed', boxDay)
     },
