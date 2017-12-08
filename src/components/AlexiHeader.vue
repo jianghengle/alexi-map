@@ -1,16 +1,19 @@
 <template>
   <div>
-    <nav class="nav header">
-        <div class="nav-left">
-          <a class="nav-item app-name">
-            Alexi Explorer
-          </a>
+    <nav class="navbar header">
+      <div class="navbar-brand">
+        <a class="nav-item app-name" href="/">
+          Alexi Explorer
+        </a>
+      </div>
+
+      <div class="navbar-menu is-active menu">
+        <div class="navbar-start">
         </div>
-        <div class="nav-right">
-          <a class="nav-item app-item">
-            <icon name="question"></icon>&nbsp;Help
-          </a>
+
+        <div class="navbar-end">
         </div>
+      </div>
     </nav>
   </div>
 </template>
@@ -31,13 +34,18 @@ export default {
 <style lang="scss" scoped>
 .header {
   background-color: black;
+
+  .menu {
+    background-color: black;
+  }
 }
 
 .app-name {
-  color: #FFFFFF!important;
+  color: #FFFFFF;
   font-weight: bold;
   font-size: 18px;
-  cursor: pointer;
+  margin: auto;
+  padding-left: 20px;
 }
 
 .app-item {

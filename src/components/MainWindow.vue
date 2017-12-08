@@ -127,8 +127,10 @@
           :show-grids="showGrids"
           :show-selection="showSelection"
           :max-date-window="maxDateWindow"
+          :global-image-size="globalImageSize"
           @box-day-changed="boxDayChanged"
-          @box-deleted="imageBoxDeleted">
+          @box-deleted="imageBoxDeleted"
+          @image-size-changed="imageSizeChanged">
         </image-box>
       </div>
 
@@ -227,7 +229,8 @@ export default {
       tiles: tiles,
       tilesList: tilesList,
       maxDateWindow: [minDay, maxDay],
-      boxes: [{day: 314}]
+      boxes: [{day: 314}],
+      globalImageSize: 200
     }
   },
   computed: {
@@ -358,6 +361,9 @@ export default {
     },
     imageBoxDeleted (idx) {
       this.boxes.splice(idx, 1)
+    },
+    imageSizeChanged (size) {
+      this.globalImageSize = size
     }
   }
 }

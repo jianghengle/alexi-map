@@ -90,10 +90,18 @@ export default {
   components: {
     Datepicker
   },
-  props: ['selectionTiles', 'idx', 'day', 'showGrids', 'showSelection', 'maxDateWindow'],
+  props: ['selectionTiles', 'idx', 'day', 'showGrids', 'showSelection', 'maxDateWindow', 'globalImageSize'],
   data () {
     return {
       imageSize: 200
+    }
+  },
+  watch: {
+    imageSize: function (val) {
+      this.$emit('image-size-changed', this.imageSize)
+    },
+    globalImageSize: function (val) {
+      this.imageSize = val
     }
   },
   computed: {
