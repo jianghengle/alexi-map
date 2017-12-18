@@ -1,0 +1,25 @@
+name: AlexiServer
+version: 0.1.0
+
+authors:
+  - Hengle
+
+targets:
+  server:
+    main: src/server.cr
+
+license: MIT
+
+dependencies:
+  crecto:
+    github: fridgerator/crecto
+    version: 0.8.0
+
+  pg:
+    github: will/crystal-pg
+    version: 0.13.3
+
+  kemal:
+    github: kemalcr/kemal
+    version: 0.21.0
+
