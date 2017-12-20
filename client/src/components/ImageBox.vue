@@ -45,7 +45,7 @@
               <img :src="cell.png"
                 :height="imageSize"
                 :width="imageSize"
-                :class="{'tile-border': showGrids}">
+                :class="{'tile-border': showGrid}">
             </a>
           </div>
           <div class="selection-on-image"
@@ -64,12 +64,12 @@
               {{a.value}}&nbsp;<span v-if="i==0">mm/day</span>
             </div>
           </div>
-          <div class="y-annotation" v-if="showGrids" v-for="a in yAnnotations" :style="{'top': a.top + 'px'}">
+          <div class="y-annotation" v-if="showGrid" v-for="a in yAnnotations" :style="{'top': a.top + 'px'}">
             <div class="y-label">
               <span v-if="a.label == '0'">&nbsp;</span>{{a.label}}
             </div>
           </div>
-          <div class="x-annotation" v-if="showGrids" v-for="a in xAnnotations" :style="{'left': a.left + 'px'}">
+          <div class="x-annotation" v-if="showGrid" v-for="a in xAnnotations" :style="{'left': a.left + 'px'}">
             <div class="x-label">
               <span v-if="a.label == '0'">&nbsp;</span>{{a.label}}
             </div>
@@ -90,7 +90,7 @@ export default {
   components: {
     Datepicker
   },
-  props: ['selectionTiles', 'idx', 'day', 'showGrids', 'showSelection', 'maxDateWindow', 'globalImageSize'],
+  props: ['selectionTiles', 'idx', 'day', 'showGrid', 'showSelection', 'maxDateWindow', 'globalImageSize'],
   data () {
     return {
       imageSize: 200

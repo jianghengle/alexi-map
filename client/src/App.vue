@@ -1,32 +1,44 @@
 <template>
-  <div id="app">
+  <div id="app" v-if="ready">
     <alexi-header></alexi-header>
-    <main-window></main-window>
+    <router-view></router-view>
     <alexi-footer></alexi-footer>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import AlexiHeader from './components/AlexiHeader'
-import MainWindow from './components/MainWindow'
+import AlexiMain from './components/AlexiMain'
 import AlexiFooter from './components/AlexiFooter'
 
 export default {
   name: 'app',
   components: {
     AlexiHeader,
-    MainWindow,
     AlexiFooter
+  },
+  data () {
+    return {
+      ready: false
+    }
+  },
+  computed: {
+    token () {
+      return this.$store.state.user.token
+    }
+  },
+  mounted () {
+    if(this.token){
+      Vue.http.headers.common['Authorization'] = this.token
+    }
+    this.ready = true
   }
 }
 </script>
 
 <style lang="scss">
 @import "~bulma";
-
-html {
-
-}
 
 body {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

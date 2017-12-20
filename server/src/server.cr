@@ -36,6 +36,34 @@ module AlexiServer
         HttpAPI::UserController.get_auth_token(env)
       end
 
+      get "/get_user_profile" do |env|
+        HttpAPI::UserController.get_user_profile(env)
+      end
+
+      get "/get_user_setting" do |env|
+        HttpAPI::UserController.get_user_setting(env)
+      end
+
+      get "/get_days_in_year/:year" do |env|
+        HttpAPI::TileController.get_days_in_year(env)
+      end
+
+      get "/get_tiles_in_day/:year/:day" do |env|
+        HttpAPI::TileController.get_tiles_in_day(env)
+      end
+
+      get "/get_latest_tiles" do |env|
+        HttpAPI::TileController.get_latest_tiles(env)
+      end
+
+      get "/get_download_url/:year/:day/:tile/:type" do |env|
+        HttpAPI::DownloadController.get_download_url(env)
+      end
+
+      get "/download_file/:key" do |env|
+        HttpAPI::DownloadController.download_file(env)
+      end
+
       port = 3000
       port = ENV["ALEXI_PORT"].to_i if ENV.has_key?("ALEXI_PORT")
       Kemal.run port

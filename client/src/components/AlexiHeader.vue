@@ -2,9 +2,9 @@
   <div>
     <nav class="navbar header">
       <div class="navbar-brand">
-        <a class="nav-item app-name" href="/">
+        <router-link class="nav-item app-name" :to="'/'">
           Alexi Explorer
-        </a>
+        </router-link>
       </div>
 
       <div class="navbar-menu is-active menu">
@@ -12,6 +12,21 @@
         </div>
 
         <div class="navbar-end">
+          <div v-if="username" class="navbar-item">
+            <router-link class="app-item" :to="'/login'">
+              <span class="nav-icon"><icon name="user"></icon></span>{{username}}
+            </router-link>
+          </div>
+          <div v-if="!token" class="navbar-item">
+            <router-link class="app-item" :to="'/login'">
+              <span class="nav-icon"><icon name="sign-in"></icon></span>Login
+            </router-link>
+          </div>
+          <div v-if="token" class="navbar-item">
+            <a class="app-item" @click="logout">
+              <span class="nav-icon"><icon name="sign-out"></icon></span>Logout
+            </a>
+          </div>
         </div>
       </div>
     </nav>
@@ -27,6 +42,25 @@ export default {
     return {
       msg: 'Welcome to Your Vue.js App'
     }
+  },
+  computed: {
+    token () {
+      return this.$store.state.user.token
+    },
+    username () {
+      var email = this.$store.state.user.email
+      if(email){
+        var index = email.indexOf('@')
+        return email.slice(0, index)
+      }
+    }
+  },
+  methods: {
+    logout () {
+      delete Vue.http.headers.common['Authorization']
+      this.$store.commit('user/reset')
+      this.$router.push('/login')
+    },
   }
 }
 </script>
@@ -55,5 +89,11 @@ export default {
 
 a:hover {
   color: #EEEEEE!important;
+}
+
+.nav-icon {
+  position: relative;
+  top: 4px;
+  right: 5px;
 }
 </style>

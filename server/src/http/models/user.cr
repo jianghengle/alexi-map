@@ -11,6 +11,21 @@ module AlexiServer
         validate_required [:email]
       end
 
+      def to_json
+        result = String.build do |str|
+          str << "{"
+          str << "\"id\":" << @id << ","
+          str << "\"email\":" << @email.to_json << ","
+          str << "\"firstName\":" << @first_name.to_json << ","
+          str << "\"lastName\":" << @first_name.to_json << ","
+          str << "\"role\":" << @role.to_json << ","
+          str << "\"createdTime\":" << @created_at.as(Time).epoch << ","
+          str << "\"updatedTime\":" << @updated_at.as(Time).epoch
+          str << "}"
+        end
+        result
+      end
+
       def self.get_user_by_password!(email, password)
         user = Repo.get_by(User, email: email)
         raise "Cannot find user" if user.nil?
