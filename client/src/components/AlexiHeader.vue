@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="navbar header">
+    <nav class="navbar is-transparent header">
       <div class="navbar-brand">
         <router-link class="nav-item app-name" :to="'/'">
           Alexi Explorer
@@ -82,12 +82,16 @@ export default {
   padding-left: 20px;
 }
 
+.app-name:hover {
+  color: #EEEEEE!important;
+}
+
 .app-item {
   color: #FFFFFF!important;
   cursor: pointer;
 }
 
-a:hover {
+.app-item:hover {
   color: #EEEEEE!important;
 }
 

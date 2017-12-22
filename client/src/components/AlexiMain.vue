@@ -132,7 +132,7 @@
         </tile-window>
       </div>
 
-      <div class="buttons-row columns" v-if="tileMatrix">
+      <div class="buttons-row columns" v-if="tileMatrix && token">
         <div class="column">
           <a class="button is-info" @click="addTileWindow">
             Add Window
@@ -175,6 +175,9 @@ export default {
     }
   },
   computed: {
+    token () {
+      return this.$store.state.user.token
+    },
     mapHeightPx () {
       return this.mapHeight + 'px'
     },
@@ -285,6 +288,8 @@ export default {
       return matrix
     },
     tileList () {
+      if(!this.tileMatrix)
+        return null
       var list = []
       for(var i=0;i<this.tileMatrix.length;i++){
         var row = this.tileMatrix[i]
@@ -498,8 +503,10 @@ export default {
       var userSetting = resp[0]
       if(savedSetting){
         this.applySetting(savedSetting)
-      }else if(userSetting){
-        this.applySetting(userSetting)
+      }else{
+        if(userSetting){
+          this.applySetting(userSetting)
+        }
         var year = resp[1][1]
         var day = resp[2][resp[2].length-1]
         var ms = (new Date(year, 0, 1, 12)).getTime() + 86400000*(day-1)

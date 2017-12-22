@@ -29,8 +29,8 @@
           </a>
         </div>
         <div class="column">
-          <a class="button is-info" @click="downloadAll">
-            Download Tiles
+          <a class="button is-info" v-if="token" @click="downloadAll">
+            Download All Tiles
           </a>
           <a class="button delete delete-button" @click="deleteWindow" v-if="wid != 0"></a>
         </div>
@@ -46,7 +46,8 @@
               :href="cell.tif">
               <img :src="cell.png"
                 :height="tileSize"
-                :width="tileSize">
+                :width="tileSize"
+                @click="clickTile(cell)">
             </a>
           </div>
           <div class="selection-on-image"
@@ -79,26 +80,39 @@
       </div>
     </div>
 
-
+    <confirm-modal
+      :opened="confirmModal.opened"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :confirm-button="confirmModal.confirmButton"
+      @close-confirm-modal="closeConfirmModal">
+    </confirm-modal>
   </div>
 </template>
 
 <script>
 import DateForm from 'dateformat'
 import Datepicker from 'vuejs-datepicker'
-
+import ConfirmModal from './modals/ConfirmModal'
 
 export default {
   name: 'tile-window',
   components: {
-    Datepicker
+    Datepicker,
+    ConfirmModal
   },
   props: ['wid', 'mainDate', 'tileMatrix', 'selectionBounds', 'showGrid', 'showSelection', 'dateDisabled', 'mainTileSize'],
   data () {
     return {
       ready: false,
       date: new Date(),
-      tileSize: 200
+      tileSize: 200,
+      confirmModal: {
+        opened: false,
+        message: '',
+        button: '',
+        context: null
+      },
     }
   },
   watch: {
@@ -297,8 +311,70 @@ export default {
       var distY = Math.round((Math.abs(p2[1] - p1[1])) * pixelPerUnit)
       return [distX, distY]
     },
+    clickTile (tile) {
+      if(!this.token){
+        var title = 'Login Required'
+        var message = 'You need to login to download the tile!'
+        var confirmButton = 'Login'
+        var context = {callback: this.loginConfirmed, args: []}
+        this.openConfirmModal(title, message, confirmButton, context)
+      }
+    },
+    loginConfirmed () {
+      this.$router.push('/login')
+    },
+    openConfirmModal (title, message, confirmButton, context) {
+      this.confirmModal.title = title
+      this.confirmModal.message = message
+      this.confirmModal.confirmButton = confirmButton
+      this.confirmModal.context = context
+      this.confirmModal.opened = true
+    },
+    closeConfirmModal (result) {
+      this.confirmModal.title = ''
+      this.confirmModal.message = ''
+      this.confirmModal.confirmButton = ''
+      this.confirmModal.opened = false
+      if(result && this.confirmModal.context){
+        var context = this.confirmModal.context
+        if(context.callback){
+            context.callback.apply(this, context.args)
+        }
+      }
+      this.confirmModal.context = null
+    },
     downloadAll () {
-
+      var urls = []
+      for(var i=0;i<this.images.length;i++){
+        for(var j=0;j<this.images[i].length;j++){
+          var image = this.images[i][j]
+          urls.push(image.png)
+          urls.push(image.tif)
+        }
+      }
+      this.downloadOne(urls, 0)
+    },
+    downloadOne (urls, index) {
+      var vm = this
+      setTimeout(function(){
+        var url = urls[index]
+        vm.downloadUrl(url)
+        index++
+        if(index < urls.length){
+          setTimeout(function(){
+            vm.downloadOne(urls, index)
+          }, 500)
+        }
+      }, 500)
+    },
+    downloadUrl (url) {
+      var dl = document.createElement('a')
+      dl.setAttribute('href', url)
+      dl.setAttribute('visibility', 'hidden')
+      dl.setAttribute('display', 'none')
+      dl.setAttribute('download', '')
+      document.body.appendChild(dl)
+      dl.click()
     },
     deleteWindow () {
       this.$emit('tile-window-deleted', this.wid)
