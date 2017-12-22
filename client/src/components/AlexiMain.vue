@@ -19,16 +19,24 @@
           :key="'bs'+idx"
           :bounds="bs"
           :options="gridOptions"
-          @rightclick="drawSelection"
-        ></gmap-rectangle>
+          @rightclick="drawSelection">
+        </gmap-rectangle>
         <gmap-rectangle
           v-if="showSelection && selectionBounds"
           :bounds="selectionBounds"
           :draggable="true"
           :editable="true"
           :options="selectionOptions"
-          @bounds_changed="selectionBoundsChanged"
-        ></gmap-rectangle>
+          @bounds_changed="selectionBoundsChanged">
+        </gmap-rectangle>
+        <ground-overlay
+          v-for = "(t, i) in tileList"
+          v-if="t.png"
+          :key="t.id"
+          :source="t.png"
+          :bounds="t.bounds"
+          :opacity="tileOpacity">
+        </ground-overlay>
       </gmap-map>
       <div class="map-options columns">
         <div class="column">
@@ -107,6 +115,30 @@
           </a>
         </div>
       </div>
+
+      <div v-if="tileMatrix">
+        <tile-window v-for="wid in tileWindows" :key="'tile-window-'+wid"
+          :wid="wid"
+          :main-date="date"
+          :tile-matrix="tileMatrix"
+          :show-grid="showGrid"
+          :show-selection="showSelection"
+          :date-disabled="dateDisabled"
+          :main-tile-size="tileSize"
+          :selection-bounds="selectionBounds"
+          @tile-window-date-changed="tileWindowDateChanged"
+          @tile-window-deleted="tileWindowDeleted"
+          @tile-window-tile-size-changed="tileWindowTileSizeChanged">
+        </tile-window>
+      </div>
+
+      <div class="buttons-row columns" v-if="tileMatrix">
+        <div class="column">
+          <a class="button is-info" @click="addTileWindow">
+            Add Window
+          </a>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -115,14 +147,14 @@
 <script>
 import DateForm from 'dateformat'
 import Datepicker from 'vuejs-datepicker'
-import ImageBox from './ImageBox'
+import TileWindow from './TileWindow'
 
 
 export default {
   name: 'alexi-main',
   components: {
     Datepicker,
-    ImageBox
+    TileWindow
   },
   data () {
     return {
@@ -138,7 +170,8 @@ export default {
       selectionOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', fillOpacity: 0.1, zIndex: 2},
       tileOpacity: 0.6,
       tileSize: 200,
-      date: new Date()
+      date: new Date(),
+      tileWindows: []
     }
   },
   computed: {
@@ -184,15 +217,8 @@ export default {
     day () {
       return Math.ceil((this.date - new Date(this.year, 0, 1)) / 86400000)
     },
-    dayCode () {
-      var code = this.day.toString()
-      while(code.length < 3){
-        code = '0' + code
-      }
-      return code
-    },
     dateCode () {
-      return this.year.toString() + this.dayCode
+      return this.year.toString() + '_' + this.day.toString()
     },
     days () {
       return this.daysInYears[this.year]
@@ -222,6 +248,59 @@ export default {
         return []
       var tileNums = this.tilesInDays[this.dateCode]
       return tileNums.map(this.tileNumToBounds)
+    },
+    tileMatrix () {
+      if(!this.selectionBounds)
+        return null
+      var north = this.selectionBounds.north
+      var south = this.selectionBounds.south
+      var west = this.selectionBounds.west
+      var east = this.selectionBounds.east
+      if(west < east){
+        var indexMatrix = this.getTileIndexMatrix(this.selectionBounds)
+      }else{
+        var b1 = {north: north, south: south, west: west, east: 180}
+        var b2 = {north: north, south: south, west: -180, east: east}
+        var m1 = this.getTileIndexMatrix(b1)
+        var m2 = this.getTileIndexMatrix(b2)
+        var indexMatrix = []
+        for(var i=0;i<m1.length;i++){
+          var row = m1[i].concat(m2[i])
+          indexMatrix.push(row)
+        }
+      }
+      var matrix = []
+      for(var i=0;i<indexMatrix.length;i++){
+        var row = indexMatrix[i]
+        var newRow = []
+        for(var j=0;j<row.length;j++){
+          var tileIndex = row[j]
+          var tile = {tileIndex: tileIndex}
+          tile.tileNum = this.tileIndexToTileNum(tileIndex)
+          tile.bounds = this.tileIndexToBounds(tileIndex)
+          newRow.push(tile)
+        }
+        matrix.push(newRow)
+      }
+      return matrix
+    },
+    tileList () {
+      var list = []
+      for(var i=0;i<this.tileMatrix.length;i++){
+        var row = this.tileMatrix[i]
+        for(var j=0;j<row.length;j++){
+          var tile = row[j]
+          if(tile.tileNum){
+            var tileCode = this.year + '_' + this.day + '_' + tile.tileNum
+            list.push({
+              id: tileCode,
+              bounds: tile.bounds,
+              png: this.$store.state.tiles.pngs[tileCode]
+            })
+          }
+        }
+      }
+      return list
     }
   },
   methods: {
@@ -233,24 +312,28 @@ export default {
     },
     dateSelected (newDate) {
       this.date = newDate
-      this.$nextTick(function(){
-        if(!this.daysInYears[this.year]) {
-          this.$http.get(xHTTPx + '/get_days_in_year/' + this.year.toString()).then((response) => {
-            var obj = {year: this.year, days: response.body}
-            this.$store.commit('tiles/setDaysInYear', obj)
-          }, (response) => {
-            console.log('failed to get days in year ' + this.year)
-          })
-        }
-        if(!this.tilesInDays[this.dateCode]) {
-          this.$http.get(xHTTPx + '/get_tiles_in_day/' + this.year.toString() + '/' + this.day.toString()).then((response) => {
-            var obj = {dateCode: this.dateCode, tiles: response.body}
-            this.$store.commit('tiles/setTilesInDay', obj)
-          }, (response) => {
-            console.log('failed to get days in year ' + this.year)
-          })
-        }
-      })
+      this.requestDays(newDate)
+    },
+    requestDays (date) {
+      var year = date.getFullYear()
+      var day = Math.ceil((date - new Date(year, 0, 1)) / 86400000)
+      var dateCode = year + '_' + day
+      if(!this.daysInYears[year]) {
+        this.$http.get(xHTTPx + '/get_days_in_year/' + year).then((response) => {
+          var obj = {year: year, days: response.body}
+          this.$store.commit('tiles/setDaysInYear', obj)
+        }, (response) => {
+          console.log('failed to get days in year ' + year)
+        })
+      }
+      if(!this.tilesInDays[dateCode]) {
+        this.$http.get(xHTTPx + '/get_tiles_in_day/' + year + '/' + day).then((response) => {
+          var obj = {dateCode: dateCode, tiles: response.body}
+          this.$store.commit('tiles/setTilesInDay', obj)
+        }, (response) => {
+          console.log('failed to get days in year ' + year)
+        })
+      }
     },
     selectPreDate () {
       if(this.preDate){
@@ -298,7 +381,76 @@ export default {
       }
     },
     tileNumToBounds (tileNum) {
-      return {north: 10, south: 0, east: 10, west: 0}
+      var x = (tileNum - 1) % 24
+      var y = Math.floor((tileNum - 1) / 24)
+      var north = 75 - (y * 15)
+      var south = north - 15
+      var west = -180 + (x * 15)
+      var east = west + 15
+      return {north: north, south: south, east: east, west: west}
+    },
+    getTileIndexMatrix (bounds) {
+      var northWest = {lat: bounds.north, lng: bounds.west}
+      var southEast = {lat: bounds.south, lng: bounds.east}
+      var nw = this.getTileIndexOfPoint(northWest)
+      var se = this.getTileIndexOfPoint(southEast)
+      var x1 = nw[0]
+      var x2 = se[0]
+      var y1 = nw[1]
+      var y2 = se[1]
+      var matrix = []
+      for(var y=y1;y<=y2;y++){
+        var row = []
+        for(var x=x1;x<=x2;x++){
+          row.push([x, y])
+        }
+        matrix.push(row)
+      }
+      return matrix
+    },
+    getTileIndexOfPoint (point) {
+      var lat = point.lat
+      var lng = point.lng
+      if(lat > 75){
+        var y = -1
+      }else{
+        var y = Math.floor((75 - lat) / 15)
+      }
+      var x = Math.floor((lng + 180) / 15)
+      return [x, y]
+    },
+    tileIndexToBounds (tileIndex) {
+      var x = tileIndex[0]
+      var y = tileIndex[1]
+      var north = 75 - (y * 15)
+      var south = north - 15
+      var west = -180 + x * 15
+      var east = west + 15
+      return {north: north, south: south, west: west, east: east}
+    },
+    tileIndexToTileNum (tileIndex) {
+      var x = tileIndex[0]
+      var y = tileIndex[1]
+      if(y < 0 || y > 8)
+        return null
+      return y * 24 + x + 1
+    },
+    tileWindowDateChanged (obj) {
+      if(obj.wid == 0){
+        this.dateSelected(obj.date)
+      }
+      this.requestDays(obj.date)
+    },
+    addTileWindow () {
+      var last = this.tileWindows[this.tileWindows.length - 1]
+      this.tileWindows.push(last + 1)
+    },
+    tileWindowDeleted (wid) {
+      var index = this.tileWindows.indexOf(wid)
+      this.tileWindows.splice(index, 1)
+    },
+    tileWindowTileSizeChanged (tileSize) {
+      this.tileSize = tileSize
     },
     applySetting (setting) {
       this.mapHeight = setting.mapHeight
@@ -353,6 +505,7 @@ export default {
         var ms = (new Date(year, 0, 1, 12)).getTime() + 86400000*(day-1)
         this.date = new Date(ms)
       }
+      this.tileWindows = [0]
       this.ready = true
     }, (response) => {
       console.log('failed to get latest tiles')

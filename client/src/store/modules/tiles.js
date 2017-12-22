@@ -5,7 +5,9 @@ export const state = {
   setting: null,
   yearRange: null,
   daysInYears: null,
-  tilesInDays: null
+  tilesInDays: null,
+  pngs: {},
+  tifs: {}
 }
 
 // mutations
@@ -28,11 +30,7 @@ export const mutations = {
     }
     if(resp[1].length){
       var day = resp[1][resp[1].length - 1]
-      var dayCode = day.toString()
-      while(dayCode.length < 3){
-        dayCode = '0' + dayCode
-      }
-      Vue.set(state.tilesInDays, year.toString() + dayCode, resp[2])
+      Vue.set(state.tilesInDays, year.toString() + '_' + day.toString(), resp[2])
     }
   },
 
@@ -42,6 +40,14 @@ export const mutations = {
 
   setTilesInDay (state, obj) {
     Vue.set(state.tilesInDays, obj.dateCode, obj.tiles)
+  },
+
+  setPng (state, obj) {
+    Vue.set(state.pngs, obj.tileCode, obj.png)
+  },
+
+  setTif (state, obj) {
+    Vue.set(state.tifs, obj.tileCode, obj.tif)
   }
 }
 
