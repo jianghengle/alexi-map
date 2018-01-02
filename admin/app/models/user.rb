@@ -6,7 +6,7 @@ class User < ApplicationRecord
   before_create :set_auth_token
 
   def set_auth_token
-    self[:auth_token] = SecureRandom.hex(32)
+    self[:auth_token] = SecureRandom.base64(32)
   end
 
   rails_admin do
