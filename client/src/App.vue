@@ -1,7 +1,9 @@
 <template>
   <div id="app" v-if="ready">
     <alexi-header></alexi-header>
-    <router-view></router-view>
+    <div class="main-body">
+      <router-view></router-view>
+    </div>
     <alexi-footer></alexi-footer>
   </div>
 </template>
@@ -44,7 +46,10 @@ body {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: black;
+}
+
+.main-body {
+  min-height: 480px;
 }
 
 .date-picker-wrapper {

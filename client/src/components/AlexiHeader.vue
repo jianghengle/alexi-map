@@ -1,32 +1,36 @@
 <template>
   <div>
-    <nav class="navbar is-transparent header">
+    <nav class="navbar is-transparent">
       <div class="navbar-brand">
-        <router-link class="nav-item app-name" :to="'/'">
-          Alexi Explorer
+        <router-link class="navbar-item is-primary app-name" :to="'/'">
+          Global Daily Evapo-Transpiration
         </router-link>
       </div>
 
-      <div class="navbar-menu is-active menu">
+      <div class="navbar-menu is-active">
         <div class="navbar-start">
         </div>
 
         <div class="navbar-end">
-          <div v-if="username" class="navbar-item">
-            <router-link class="app-item" :to="'/login'">
+          <div v-if="username" class="navbar-item has-dropdown is-hoverable">
+            <router-link class="navbar-link" :to="'/login'">
               <span class="nav-icon"><icon name="user"></icon></span>{{username}}
             </router-link>
+            <div class="navbar-dropdown is-boxed">
+              <router-link class="navbar-item" :to="'/profile'">
+                Profile
+              </router-link>
+              <router-link class="navbar-item" :to="'/settings'">
+                Settings
+              </router-link>
+            </div>
           </div>
-          <div v-if="!token" class="navbar-item">
-            <router-link class="app-item" :to="'/login'">
-              <span class="nav-icon"><icon name="sign-in"></icon></span>Login
-            </router-link>
-          </div>
-          <div v-if="token" class="navbar-item">
-            <a class="app-item" @click="logout">
-              <span class="nav-icon"><icon name="sign-out"></icon></span>Logout
-            </a>
-          </div>
+          <router-link v-if="!token" class="navbar-item" :to="'/login'">
+            <span class="nav-icon"><icon name="sign-in"></icon></span>Login
+          </router-link>
+          <a v-if="token" class="navbar-item" @click="logout">
+            <span class="nav-icon"><icon name="sign-out"></icon></span>Logout
+          </a>
         </div>
       </div>
     </nav>
@@ -66,34 +70,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header {
-  background-color: black;
-
-  .menu {
-    background-color: black;
-  }
-}
 
 .app-name {
-  color: #FFFFFF;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
   margin: auto;
-  padding-left: 20px;
 }
 
-.app-name:hover {
-  color: #EEEEEE!important;
-}
-
-.app-item {
-  color: #FFFFFF!important;
-  cursor: pointer;
-}
-
-.app-item:hover {
-  color: #EEEEEE!important;
-}
 
 .nav-icon {
   position: relative;

@@ -1,5 +1,56 @@
 <template>
   <div class="main-window">
+    <div class="map-options columns">
+      <div class="column">
+        <label>Map Height</label>
+        <input class="input map-option-input" type="number" step="20" v-model.number="mapHeight">
+        &nbsp;&nbsp;
+        <label class="checkbox map-option">
+          <input type="checkbox" v-model="showGrid">
+          Grid
+        </label>
+      </div>
+      <div class="column date-picker-column">
+        <a class="button" :disabled="!preDate" @click="selectPreDate">
+          <span class="icon is-small">
+            <icon name="chevron-left"></icon>
+          </span>
+        </a>
+        <datepicker
+          wrapper-class="date-picker-wrapper"
+          input-class="date-picker-input"
+          format="yyyy-MM-dd"
+          :value="date"
+          :disabled="dateDisabled"
+          v-on:selected="dateSelected">
+        </datepicker>
+        <a class="button" :disabled="!nextDate" @click="selectNextDate">
+          <span class="icon is-small">
+            <icon name="chevron-right"></icon>
+          </span>
+        </a>
+      </div>
+      <div class="column dropdown-column">
+        <nav v-if="token" class="navbar is-transparent" role="navigation" aria-label="dropdown navigation">
+          <div class="navbar-item has-dropdown is-hoverable dropdown-center">
+            <a class="navbar-link">
+              Settings
+            </a>
+            <div class="navbar-dropdown is-boxed">
+              <a class="navbar-item">
+                Load
+              </a>
+              <a class="navbar-item">
+                Save
+              </a>
+              <a class="navbar-item">
+                Edit
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
     <div class="map-window" v-if="ready">
       <gmap-map
         ref="map"
@@ -27,7 +78,8 @@
           :draggable="true"
           :editable="true"
           :options="selectionOptions"
-          @bounds_changed="selectionBoundsChanged">
+          @bounds_changed="selectionBoundsChanged"
+          @dragend="selectionBoundsChanged">
         </gmap-rectangle>
         <ground-overlay
           v-for = "(t, i) in tileList"
@@ -38,100 +90,76 @@
           :opacity="tileOpacity">
         </ground-overlay>
       </gmap-map>
-      <div class="map-options columns">
-        <div class="column">
-          <label class="checkbox map-option">
-            <input type="checkbox" v-model="showGrid">
-            Grid
-          </label>
-          &nbsp;&nbsp;
+    </div>
+    <div class="map-options columns">
+      <div class="column">
+        <span v-if="selectionBounds">
           <label class="checkbox map-option">
             <input type="checkbox" v-model="showSelection">
             Selection
           </label>
           &nbsp;
           <label class="map-option">
-            Tiles
+            Opacity
           </label>
           <input class="input map-option-input opacity-input" type="number" step="0.1" v-model.number="tileOpacity">
-        </div>
-        <div class="column date-picker-column">
-          <a class="button" :disabled="!preDate" @click="selectPreDate">
-            <span class="icon is-small">
-              <icon name="chevron-left"></icon>
-            </span>
-          </a>
-          <datepicker
-            wrapper-class="date-picker-wrapper"
-            input-class="date-picker-input"
-            format="yyyy-MM-dd"
-            :value="date"
-            :disabled="dateDisabled"
-            v-on:selected="dateSelected">
-          </datepicker>
-          <a class="button" :disabled="!nextDate" @click="selectNextDate">
-            <span class="icon is-small">
-              <icon name="chevron-right"></icon>
-            </span>
-          </a>
-        </div>
-        <div class="column">
-          <label>Map Height</label>
-          <input class="input map-option-input" type="number" step="20" v-model.number="mapHeight">
-        </div>
+        </span>
+      </div>
+      <div class="column">
+        <span class="field" v-if="selectionBounds">
+          <span class="coordinate">
+            <label class="coordinate-label">W</label>
+            <input class="input coordinate-input" type="number" v-model.number="selectionBounds.west">
+          </span>
+          <span class="coordinate">
+            <label class="coordinate-label">N</label>
+            <input class="input coordinate-input" type="number" v-model.number="selectionBounds.north">
+          </span>
+          <span class="coordinate">
+            <label class="coordinate-label">E</label>
+            <input class="input coordinate-input" type="number" v-model.number="selectionBounds.east">
+          </span>
+          <span class="coordinate">
+            <label class="coordinate-label">S</label>
+            <input class="input coordinate-input" type="number" v-model.number="selectionBounds.south">
+          </span>
+        </span>
+      </div>
+      <div class="column dropdown-column">
+        <nav class="navbar is-transparent" role="navigation" aria-label="dropdown navigation">
+          <div class="navbar-item has-dropdown is-hoverable dropdown-center">
+            <a class="navbar-link">
+              Selection
+            </a>
+            <div class="navbar-dropdown is-boxed">
+              <a class="navbar-item"  @click="newSelection">
+                New
+              </a>
+              <a class="navbar-item" @click="clearSelection">
+                Clear
+              </a>
+            </div>
+          </div>
+        </nav>
       </div>
     </div>
-
     <div class="alexi-window">
-      <div class="buttons-row columns">
-        <div class="column is-one-quarter">
-          <a class="button is-info" @click="newSelection">
-            New Selection
-          </a>
-        </div>
-        <div class="column">
-          <span class="field" v-if="selectionBounds">
-            <span class="coordinate">
-              <label class="coordinate-label">N</label>
-              <input class="input coordinate-input" type="number" v-model.number="selectionBounds.north">
-            </span>
-            <span class="coordinate">
-              <label class="coordinate-label">S</label>
-              <input class="input coordinate-input" type="number" v-model.number="selectionBounds.south">
-            </span>
-            <span class="coordinate">
-              <label class="coordinate-label">E</label>
-              <input class="input coordinate-input" type="number" v-model.number="selectionBounds.east">
-            </span>
-            <span class="coordinate">
-              <label class="coordinate-label">W</label>
-              <input class="input coordinate-input" type="number" v-model.number="selectionBounds.west">
-            </span>
-          </span>
-        </div>
-        <div class="column is-one-quarter">
-          <a class="button" @click="clearSelection">
-            Clear Selection
-          </a>
-        </div>
-      </div>
-
       <div v-if="tileMatrix">
         <tile-window v-for="wid in tileWindows" :key="'tile-window-'+wid"
           :wid="wid"
           :main-date="date"
           :tile-matrix="tileMatrix"
-          :show-grid="showGrid"
+          :main-show-grid="showGrid"
           :show-selection="showSelection"
           :date-disabled="dateDisabled"
           :main-tile-size="tileSize"
           :selection-bounds="selectionBounds"
           @tile-window-date-changed="tileWindowDateChanged"
           @tile-window-deleted="tileWindowDeleted"
-          @tile-window-tile-size-changed="tileWindowTileSizeChanged">
+          @tile-window-tile-size-changed="tileWindowTileSizeChanged"
+          @tile-window-show-grid-changed="tileWindowShowGridChanged">
         </tile-window>
       </div>
-
       <div class="buttons-row columns" v-if="tileMatrix && token">
         <div class="column">
           <a class="button is-info" @click="addTileWindow">
@@ -375,15 +403,17 @@ export default {
       this.selectionBounds = null
     },
     mapBoundsChanged (e) {
-      this.mapSize = e.f.f - e.f.b
+      if(e)
+        this.mapSize = e.f.f - e.f.b
     },
     selectionBoundsChanged (e) {
-      this.selectionBounds = {
-        north: e.f.f,
-        south: e.f.b,
-        east: e.b.f,
-        west: e.b.b
-      }
+      if(e)
+        this.selectionBounds = {
+          north: e.f.f,
+          south: e.f.b,
+          east: e.b.f,
+          west: e.b.b
+        }
     },
     tileNumToBounds (tileNum) {
       var x = (tileNum - 1) % 24
@@ -457,6 +487,9 @@ export default {
     tileWindowTileSizeChanged (tileSize) {
       this.tileSize = tileSize
     },
+    tileWindowShowGridChanged (showGrid) {
+      this.showGrid = showGrid
+    },
     applySetting (setting) {
       this.mapHeight = setting.mapHeight
       var latlng = setting.mapCenter.split(',').map(parseFloat)
@@ -529,8 +562,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 
+.main-window {
+  padding-bottom: 20px;
+}
+
 .map-options {
-  margin-top: 0px;
+  margin: 0px;
   text-align: center;
 }
 
@@ -567,8 +604,23 @@ export default {
   padding-top: 6px;
 }
 
+.dropdown-column {
+  padding: 0px;
+  text-align: center;
+}
+
+.dropdown-center {
+  margin: auto;
+}
+
+.map-window {
+  margin-top: -10px;
+  margin-bottom: 0px;
+}
+
 .alexi-window {
-  margin-bottom: 100px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 </style>

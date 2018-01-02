@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <div class="container">
-      <div class="welcome">Welcome to Alexi Explorer!</div>
+      <div class="welcome">Welcome to Global Daily Evapo-Transpiration website!</div>
 
       <div class="field">
         <p class="control has-icons-left">
@@ -96,7 +96,6 @@ export default {
 .login-page {
   padding: 20px;
   margin-top: 50px;
-  margin-bottom: 50px;
 }
 
 .welcome {

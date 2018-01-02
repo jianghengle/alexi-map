@@ -6,6 +6,11 @@
           <span class="image-input">
             <label class="image-input-label">Tile Size</label>
             <input class="input image-input-input" type="number" step="10" v-model.number="tileSize">
+            &nbsp;
+            <label class="checkbox map-option">
+              <input type="checkbox" v-model="showGrid">
+              Grid
+            </label>
           </span>
         </div>
         <div class="column">
@@ -101,12 +106,13 @@ export default {
     Datepicker,
     ConfirmModal
   },
-  props: ['wid', 'mainDate', 'tileMatrix', 'selectionBounds', 'showGrid', 'showSelection', 'dateDisabled', 'mainTileSize'],
+  props: ['wid', 'mainDate', 'tileMatrix', 'selectionBounds', 'mainShowGrid', 'showSelection', 'dateDisabled', 'mainTileSize'],
   data () {
     return {
       ready: false,
       date: new Date(),
       tileSize: 200,
+      showGrid: true,
       confirmModal: {
         opened: false,
         message: '',
@@ -117,10 +123,16 @@ export default {
   },
   watch: {
     tileSize: function (val) {
-      this.$emit('tile-window-tile-size-changed', this.tileSize)
+      this.$emit('tile-window-tile-size-changed', val)
     },
     mainTileSize: function (val) {
       this.tileSize = val
+    },
+    showGrid: function (val) {
+      this.$emit('tile-window-show-grid-changed', val)
+    },
+    mainShowGrid: function (val) {
+      this.showGrid = val
     },
     mainDate: function (val) {
       if(this.wid == 0){
@@ -203,14 +215,14 @@ export default {
       if(!this.tileSize)
         return {top: 0, left: 0, height: 0, width: 0}
       var topLeftTile = this.tileMatrix[0][0]
-      var tlp2 = [topLeftTile.bounds.north, topLeftTile.bounds.west]
-      var tlp1 = [this.selectionBounds.north, this.selectionBounds.west]
+      var tlp2 = [topLeftTile.bounds.west, topLeftTile.bounds.north]
+      var tlp1 = [this.selectionBounds.west, this.selectionBounds.north]
       var topLeftDist = this.distanceInPixel(tlp1, tlp2)
 
       var lastRow = this.tileMatrix[this.tileMatrix.length - 1]
       var bottomRightTile = lastRow[lastRow.length - 1]
-      var brp1 = [this.selectionBounds.south, this.selectionBounds.east]
-      var brp2 = [bottomRightTile.bounds.south, bottomRightTile.bounds.east]
+      var brp1 = [this.selectionBounds.east, this.selectionBounds.south]
+      var brp2 = [bottomRightTile.bounds.east, bottomRightTile.bounds.south]
       var bottomRightDist = this.distanceInPixel(brp1, brp2)
 
       var wholeHeight = this.tileMatrix.length * this.tileSize
@@ -383,6 +395,7 @@ export default {
   mounted () {
     this.date = this.mainDate
     this.tileSize = this.mainTileSize
+    this.showGrid = this.mainShowGrid
     this.ready = true
   }
 }
