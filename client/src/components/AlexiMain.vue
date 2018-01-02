@@ -84,7 +84,7 @@
         <ground-overlay
           v-for = "(t, i) in tileList"
           v-if="t.png"
-          :key="t.id"
+          :key="t.id + tileOpacity"
           :source="t.png"
           :bounds="t.bounds"
           :opacity="tileOpacity">
