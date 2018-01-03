@@ -3,6 +3,7 @@ import os
 from libtiff import TIFF
 import png
 from datetime import datetime
+from joblib import Parallel, delayed
 
 class ColorMapper:
     def __init__(self, minval, maxval, colors):
@@ -34,6 +35,7 @@ class ColorMapper:
     def cmap(self, val, minc, maxc):
         return int(val * (maxc - minc) / self.interval + minc)
 
+
 def tif2png(mapper, tiffile):
     fullpath = os.path.abspath(tiffile)
     dirname = os.path.dirname(fullpath)
@@ -58,6 +60,7 @@ def tif2png(mapper, tiffile):
     w = png.Writer(shape[0], shape[1], transparent=(0,0,0))
     w.write(f, img)
     f.close()
+
 
 def main(argv):
     minval = 0.011
@@ -85,8 +88,8 @@ def main(argv):
             if os.path.isfile(f) and ext == '.tif':
                 tiffiles.append(f)
 
-    for tiffile in tiffiles:
-        tif2png(mapper, tiffile)
+    Parallel(n_jobs=4)(delayed(tif2png)(mapper, tiffile)
+                           for tiffile in tiffiles)
 
 if __name__ == "__main__":
     start=datetime.now()
