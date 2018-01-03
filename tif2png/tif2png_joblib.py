@@ -88,7 +88,8 @@ def main(argv):
             if os.path.isfile(f) and ext == '.tif':
                 tiffiles.append(f)
 
-    Parallel(n_jobs=4)(delayed(tif2png)(mapper, tiffile)
+    n_jobs = min(36, len(tiffiles))
+    Parallel(n_jobs=n_jobs)(delayed(tif2png)(mapper, tiffile)
                            for tiffile in tiffiles)
 
 if __name__ == "__main__":
