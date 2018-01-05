@@ -92,7 +92,7 @@
       </gmap-map>
     </div>
     <div class="map-options columns">
-      <div class="column">
+      <div class="column map-options-column">
         <span v-if="selectionBounds">
           <label class="checkbox map-option">
             <input type="checkbox" v-model="showSelection">
@@ -569,6 +569,10 @@ export default {
 .map-options {
   margin: 0px;
   text-align: center;
+}
+
+.map-options-column {
+  padding-top: 16px;
 }
 
 .map-option-input {
