@@ -6,13 +6,15 @@ from datetime import datetime
 from joblib import Parallel, delayed
 
 class ColorMapper:
-    def __init__(self, minval, maxval, colors):
+    def __init__(self, minval, maxval, colors, transparent=[1,1,1], overflow=[0,0,0]):
         self.min = minval
         self.max = maxval
         self.colors = colors
         self.len = len(colors) - 1
         self.range = [minval, maxval]
         self.interval = (maxval - minval) / self.len
+        self.transparent = transparent
+        self.overflow = overflow
 
         self.steps = []
         for i in range(self.len):
@@ -20,8 +22,10 @@ class ColorMapper:
         self.steps.append(maxval)
 
     def colormap(self, value):
-        if value < self.min or value > self.max:
-            return [0, 0, 0]
+        if value <= self.min:
+            return self.transparent
+        if value > self.max:
+            return self.overflow
         if value == self.max:
             return self.colors[self.len]
         index = int((value - self.min) / self.interval)
@@ -57,14 +61,14 @@ def tif2png(mapper, tiffile):
         img.append(row)
 
     f = open(pngfile, 'wb')
-    w = png.Writer(shape[0], shape[1], transparent=(0,0,0))
+    w = png.Writer(shape[0], shape[1], transparent=mapper.transparent)
     w.write(f, img)
     f.close()
 
 
 def main(argv):
-    minval = 0.011
-    maxval = 7.5
+    minval = 0.01
+    maxval = 10
 
     red = [255, 0, 0]
     orangered = [255, 69, 0]

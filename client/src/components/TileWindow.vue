@@ -233,7 +233,7 @@ export default {
     },
     colorAnnotations () {
       if(!this.tileSize) return []
-      var values = [7.5, 6.0, 4.5, 3.0, 1.5, 0.0]
+      var values = [10, 8, 6, 4, 2, 0]
       var intervel = this.height / (values.length - 1)
       var annotations = []
       for(var i=0;i<values.length;i++){
