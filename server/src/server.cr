@@ -3,7 +3,6 @@ require "crecto"
 require "kemal"
 require "json"
 require "crypto/bcrypt/password"
-require "secure_random"
 require "oauth2"
 
 require "./http/models/*"

@@ -42,7 +42,7 @@ module AlexiServer
         raise "cannot find file" unless File.file? path
         download = Download.new
         download.user_id = user.id unless user.nil?
-        download.key = SecureRandom.hex(32).to_s
+        download.key = Random::Secure.urlsafe_base64(32).to_s
         download.year = year
         download.day = day
         download.tile = tile

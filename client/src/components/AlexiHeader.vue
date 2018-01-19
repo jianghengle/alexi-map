@@ -3,7 +3,7 @@
     <nav class="navbar is-transparent">
       <div class="navbar-brand">
         <router-link class="navbar-item is-primary app-name" :to="'/'">
-          Global Daily Evapo-Transpiration
+          Global Daily Evapo-Transpiration (GloDET)
         </router-link>
       </div>
 

@@ -13,13 +13,13 @@ license: MIT
 dependencies:
   crecto:
     github: fridgerator/crecto
-    version: 0.8.0
+    version: 0.8.3
 
   pg:
     github: will/crystal-pg
-    version: 0.13.3
+    version: 0.14.1
 
   kemal:
     github: kemalcr/kemal
-    version: 0.21.0
+    version: 0.22.0
 
