@@ -3,13 +3,13 @@
     <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">
-      <img src="static/logos/DWFI.png" height="250" class="logo">
-      <img src="static/logos/USDA ARS.png" width="250" class="logo">
-      <img src="static/logos/NASA.png" width="100" class="logo">
-      <img src="static/logos/ESSIC.jpg" width="150" class="logo essic">
-      <img src="static/logos/NDMC.png" width="400" class="logo">
-      <img src="static/logos/USAID.png" width="300" class="logo usaid">
-      <img src="static/logos/ICBA.png" width="150" class="logo icba">
+      <a href="http://waterforfood.nebraska.edu/"><img src="static/logos/DWFI.png" height="250" class="logo"></a>
+      <a href="https://www.ars.usda.gov"><img src="static/logos/USDA ARS.png" width="250" class="logo"></a>
+      <a href="https://www.nasa.gov/"><img src="static/logos/NASA.png" width="100" class="logo"></a>
+      <a href="http://essic.umd.edu/joom2/"><img src="static/logos/ESSIC.jpg" width="150" class="logo essic"></a>
+      <a href="http://drought.unl.edu"><img src="static/logos/NDMC.png" width="400" class="logo"></a>
+      <a href="https://www.usaid.gov/"><img src="static/logos/USAID.png" width="300" class="logo usaid"></a>
+      <a href="http://www.biosaline.org/"><img src="static/logos/ICBA.png" width="150" class="logo icba"></a>
     </div>
   </div>
 </footer>

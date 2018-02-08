@@ -38,9 +38,8 @@ module AlexiServer
           days = Tile.get_days_in_year(years[1])
           tiles = Tile.get_tiles_in_day(years[1], days[-1])
           user = get_user(ctx)
-          setting = Setting.get_setting(user)
-          setting_json = setting.nil? ? "null" : setting.to_json
-          "[#{setting_json}, #{years.to_json},#{days.to_json},#{tiles.to_json}]"
+          settings_json = Setting.get_settings_json(user)
+          "[#{settings_json}, #{years.to_json},#{days.to_json},#{tiles.to_json}]"
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")
         rescue e : Exception

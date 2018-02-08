@@ -80,6 +80,7 @@ export default {
           localStorage.setItem('email', this.email)
         }
         this.waiting = false
+        this.$store.commit('tiles/setSetting', null)
         this.$router.push('/')
       }, response => {
         this.error = 'Failed to authorize user!'

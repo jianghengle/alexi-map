@@ -53,7 +53,6 @@ module AlexiServer
         yyyy = year.to_s
         tiles = [] of Int32
         ddd = day.to_s
-        puts ddd
         raise "wrong day parameter" unless (ddd.size <= 3)
         while ddd.size != 3
           ddd = "0#{ddd}"

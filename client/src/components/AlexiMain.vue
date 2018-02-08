@@ -2,13 +2,15 @@
   <div class="main-window">
     <div class="map-options columns">
       <div class="column">
-        <label>Map Height</label>
-        <input class="input map-option-input" type="number" step="20" v-model.number="mapHeight">
-        &nbsp;&nbsp;
-        <label class="checkbox map-option">
-          <input type="checkbox" v-model="showGrid">
-          Grid
-        </label>
+        <div v-if="token">
+          <label>Map Height</label>
+          <input class="input map-option-input" type="number" step="20" v-model.number="mapHeight">
+          &nbsp;&nbsp;
+          <label class="checkbox map-option">
+            <input type="checkbox" v-model="showGrid">
+            Grid
+          </label>
+        </div>
       </div>
       <div class="column date-picker-column">
         <a class="button" :disabled="!preDate" @click="selectPreDate">
@@ -37,14 +39,14 @@
               Settings
             </a>
             <div class="navbar-dropdown is-boxed">
-              <a class="navbar-item">
-                Load
+              <a class="navbar-item" v-for="(s, i) in userSettings"
+                @click="loadSetting(s)">
+                {{s.name}}&nbsp;
+                <span v-if="s.isDefault">(default)</span>
               </a>
-              <a class="navbar-item">
+              <hr class="navbar-divider">
+              <a class="navbar-item" @click="openSaveSettingModal">
                 Save
-              </a>
-              <a class="navbar-item">
-                Edit
               </a>
             </div>
           </div>
@@ -93,7 +95,7 @@
     </div>
     <div class="map-options columns">
       <div class="column map-options-column">
-        <span v-if="selectionBounds">
+        <span v-if="token && selectionBounds">
           <label class="checkbox map-option">
             <input type="checkbox" v-model="showSelection">
             Selection
@@ -126,7 +128,7 @@
         </span>
       </div>
       <div class="column dropdown-column">
-        <nav class="navbar is-transparent" role="navigation" aria-label="dropdown navigation">
+        <nav v-if="token" class="navbar is-transparent" role="navigation" aria-label="dropdown navigation">
           <div class="navbar-item has-dropdown is-hoverable dropdown-center">
             <a class="navbar-link">
               Selection
@@ -144,7 +146,7 @@
       </div>
     </div>
     <div class="alexi-window">
-      <div v-if="tileMatrix">
+      <div v-if="tileMatrix" v-show="token">
         <tile-window v-for="wid in tileWindows" :key="'tile-window-'+wid"
           :wid="wid"
           :main-date="date"
@@ -169,6 +171,13 @@
       </div>
     </div>
 
+    <save-setting-modal
+      :opened="saveSettingModal.opened"
+      :settings="userSettings"
+      :setting="saveSettingModal.setting"
+      @close-save-setting-modal="closeSaveSettingModal">
+    </save-setting-modal>
+
   </div>
 </template>
 
@@ -176,13 +185,14 @@
 import DateForm from 'dateformat'
 import Datepicker from 'vuejs-datepicker'
 import TileWindow from './TileWindow'
-
+import SaveSettingModal from './modals/SaveSettingModal'
 
 export default {
   name: 'alexi-main',
   components: {
     Datepicker,
-    TileWindow
+    TileWindow,
+    SaveSettingModal
   },
   data () {
     return {
@@ -194,12 +204,17 @@ export default {
       showGrid: true,
       gridOptions: {strokeWeight: 0.4, fillOpacity: 0.1},
       showSelection: true,
-      selectionBounds: {north: 40, south: 5, east: 55, west: -10},
+      selectionBounds: {north: 25, south: 20, east: 25, west: 20},
       selectionOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', fillOpacity: 0.1, zIndex: 2},
       tileOpacity: 0.6,
       tileSize: 200,
       date: new Date(),
-      tileWindows: []
+      tileWindows: [],
+      userSettings: [],
+      saveSettingModal: {
+        opened: false,
+        setting: null
+      },
     }
   },
   computed: {
@@ -407,7 +422,7 @@ export default {
         this.mapSize = e.f.f - e.f.b
     },
     selectionBoundsChanged (e) {
-      if(e)
+      if(e && e.f && e.b)
         this.selectionBounds = {
           north: e.f.f,
           south: e.f.b,
@@ -526,6 +541,28 @@ export default {
       setting.tileSize = this.tileSize
       setting.date = this.date
       return setting
+    },
+    loadSetting (setting) {
+      this.ready = false
+      this.$nextTick(function(){
+        this.applySetting(setting)
+        this.ready = true
+      })
+    },
+    openSaveSettingModal () {
+      this.saveSettingModal.setting = this.collectSetting()
+      this.saveSettingModal.opened = true
+    },
+    closeSaveSettingModal (result) {
+      this.saveSettingModal.opened = false
+      this.saveSettingModal.setting = null
+      if(result){
+        this.$http.get(xHTTPx + '/get_user_settings').then((response) => {
+          this.userSettings = response.body
+        }, (response) => {
+          console.log('failed to get user settings')
+        })
+      }
     }
   },
   mounted () {
@@ -533,12 +570,12 @@ export default {
       var resp = response.body
       this.$store.commit('tiles/setLatestTiles', resp.slice(1))
       var savedSetting = this.$store.state.tiles.setting
-      var userSetting = resp[0]
+      this.userSettings = resp[0]
       if(savedSetting){
         this.applySetting(savedSetting)
       }else{
-        if(userSetting){
-          this.applySetting(userSetting)
+        if(this.userSettings.length){
+          this.applySetting(this.userSettings[0])
         }
         var year = resp[1][1]
         var day = resp[2][resp[2].length-1]

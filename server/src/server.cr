@@ -39,8 +39,16 @@ module AlexiServer
         HttpAPI::UserController.get_user_profile(env)
       end
 
-      get "/get_user_setting" do |env|
-        HttpAPI::UserController.get_user_setting(env)
+      get "/get_user_settings" do |env|
+        HttpAPI::UserController.get_user_settings(env)
+      end
+
+      post "/save_user_setting" do |env|
+        HttpAPI::UserController.save_user_setting(env)
+      end
+
+      post "/delete_user_setting" do |env|
+        HttpAPI::UserController.delete_user_setting(env)
       end
 
       get "/get_days_in_year/:year" do |env|

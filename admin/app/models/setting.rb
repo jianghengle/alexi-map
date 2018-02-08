@@ -12,6 +12,8 @@ class Setting < ApplicationRecord
       field :tile_opacity
       field :selection
       field :tile_size
+      field :is_default
+      field :name
     end
   end
 end

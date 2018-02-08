@@ -12,8 +12,11 @@
         </div>
 
         <div class="navbar-end">
+          <router-link v-if="routePath != '/'" class="navbar-item" :to="'/'">
+            <span class="nav-icon"><icon name="home"></icon></span>Home
+          </router-link>
           <div v-if="username" class="navbar-item has-dropdown is-hoverable">
-            <router-link class="navbar-link" :to="'/login'">
+            <router-link class="navbar-link" :to="'/profile'">
               <span class="nav-icon"><icon name="user"></icon></span>{{username}}
             </router-link>
             <div class="navbar-dropdown is-boxed">
@@ -57,7 +60,10 @@ export default {
         var index = email.indexOf('@')
         return email.slice(0, index)
       }
-    }
+    },
+    routePath () {
+      return this.$route.path
+    },
   },
   methods: {
     logout () {
