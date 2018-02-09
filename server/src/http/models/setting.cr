@@ -47,64 +47,56 @@ module AlexiServer
           index = i if s.is_default
         end
         settings.swap(index, 0) unless index == 0
-        result = String.build do |str|
-          first = true
-          str << "["
-          settings.each do |s|
-            if first
-              str << s.to_json
-              first = false
-            else
-              str << ","
-              str << s.to_json
-            end
-          end
-          str << "]"
-        end
-        result
+        json_arr = settings.map { |s| s.to_json }
+        json_str = json_arr.join(",")
+        "[#{json_str}]"
       end
 
-      def self.save_setting(user, id, name, is_default, map_height, map_center, map_zoom, show_grid, show_selection, tile_opacity, selection, tile_size)
+      def self.save_setting(user, id, setting_data)
         if id == ""
-          Setting.create_setting(user, name, is_default, map_height, map_center, map_zoom, show_grid, show_selection, tile_opacity, selection, tile_size)
+          Setting.create_setting(user, setting_data)
         else
-          Setting.update_setting(user, id.to_i, name, is_default, map_height, map_center, map_zoom, show_grid, show_selection, tile_opacity, selection, tile_size)
+          Setting.update_setting(user, id.to_i, setting_data)
         end
       end
 
-      def self.create_setting(user, name, is_default, map_height, map_center, map_zoom, show_grid, show_selection, tile_opacity, selection, tile_size)
-        setting = Setting.new
+      def self.create_setting(user, setting_data = nil)
+        if setting_data.nil?
+          setting = Setting.new
+          setting.name = "Default"
+          setting.is_default = true
+          setting.map_height = 600
+          setting.map_center = "22.5, 22.5"
+          setting.map_zoom = 3
+          setting.show_grid = true
+          setting.show_selection = true
+          setting.tile_opacity = 0.6
+          setting.selection = "25, 20, 25, 20"
+          setting.tile_size = 200
+        else
+          setting = setting_data.as(Setting)
+        end
         setting.user_id = user.id
-        setting.map_height = map_height
-        setting.map_center = map_center
-        setting.map_zoom = map_zoom
-        setting.show_grid = show_grid
-        setting.show_selection = show_selection
-        setting.tile_opacity = tile_opacity
-        setting.selection = selection
-        setting.tile_size = tile_size
-        setting.is_default = is_default
-        setting.name = name
         changeset = Repo.insert(setting)
         raise changeset.errors.to_s unless changeset.valid?
       end
 
-      def self.update_setting(user, id, name, is_default, map_height, map_center, map_zoom, show_grid, show_selection, tile_opacity, selection, tile_size)
+      def self.update_setting(user, id, setting_data)
         setting = Repo.get(Setting, id)
         raise "Cannot find setting" if setting.nil?
         setting = setting.as(Setting)
         raise "Not user's setting" if setting.user_id != user.id
-        setting.map_height = map_height
-        setting.map_center = map_center
-        setting.map_zoom = map_zoom
-        setting.show_grid = show_grid
-        setting.show_selection = show_selection
-        setting.tile_opacity = tile_opacity
-        setting.selection = selection
-        setting.tile_size = tile_size
-        setting.name = name
-        Setting.remove_default(user) if (setting.is_default == false && is_default)
-        setting.is_default = is_default
+        setting.map_height = setting_data.map_height
+        setting.map_center = setting_data.map_center
+        setting.map_zoom = setting_data.map_zoom
+        setting.show_grid = setting_data.show_grid
+        setting.show_selection = setting_data.show_selection
+        setting.tile_opacity = setting_data.tile_opacity
+        setting.selection = setting_data.selection
+        setting.tile_size = setting_data.tile_size
+        setting.name = setting_data.name
+        Setting.remove_default(user) if (!setting.is_default && setting_data.is_default)
+        setting.is_default = setting_data.is_default
         changeset = Repo.update(setting)
         raise changeset.errors.to_s unless changeset.valid?
       end
