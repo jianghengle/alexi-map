@@ -132,7 +132,7 @@ export default {
       if(!this.setting)
         return false
       return this.isDefault != this.setting.isDefault
-        || this.name !=this.setting.name.trim()
+        || this.name != this.setting.name
         || this.mapHeight !=this.setting.mapHeight
         || this.mapCenter != this.setting.mapCenter
         || this.mapZoom != this.setting.mapZoom

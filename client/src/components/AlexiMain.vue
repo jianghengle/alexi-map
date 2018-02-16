@@ -199,6 +199,7 @@ export default {
       ready: false,
       mapHeight: 600,
       mapCenter: {lat: 22.5, lng: 22.5},
+      newMapCenter: {lat: 22.5, lng: 22.5},
       mapZoom: 3,
       mapSize: null,
       showGrid: true,
@@ -353,7 +354,7 @@ export default {
   },
   methods: {
     mapCenterChanged (center) {
-      this.mapCenter = {lat: center.lat(), lng: center.lng()}
+      this.newMapCenter = {lat: center.lat(), lng: center.lng()}
     },
     mapZoomChanged (zoom) {
       this.mapZoom = zoom
@@ -404,7 +405,7 @@ export default {
       }
     },
     newSelection () {
-      var center = this.mapCenter
+      var center = this.newMapCenter
       var latRadius = this.mapSize / 20
       var lngRadius = this.mapSize / 20
       this.selectionBounds = {
@@ -509,6 +510,7 @@ export default {
       this.mapHeight = setting.mapHeight
       var latlng = setting.mapCenter.split(',').map(parseFloat)
       this.mapCenter = {lat: latlng[0], lng: latlng[1]}
+      this.newMapCenter = {lat: latlng[0], lng: latlng[1]}
       this.mapZoom = setting.mapZoom
       this.showGrid = setting.showGrid
       this.showSelection = setting.showSelection
@@ -527,7 +529,7 @@ export default {
     collectSetting () {
       var setting = {}
       setting.mapHeight = this.mapHeight
-      setting.mapCenter = [this.mapCenter.lat, this.mapCenter.lng].join(', ')
+      setting.mapCenter = [this.newMapCenter.lat, this.newMapCenter.lng].join(', ')
       setting.mapZoom = this.mapZoom
       setting.showGrid = this.showGrid
       setting.showSelection = this.showSelection

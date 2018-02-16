@@ -70,6 +70,9 @@ export default {
       delete Vue.http.headers.common['Authorization']
       this.$store.commit('user/reset')
       this.$router.push('/login')
+      this.$nextTick(function(){
+        this.$store.commit('tiles/setSetting', null)
+      })
     },
   }
 }
