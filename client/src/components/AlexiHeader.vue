@@ -15,7 +15,7 @@
           <router-link v-if="routePath != '/'" class="navbar-item" :to="'/'">
             <span class="nav-icon"><icon name="home"></icon></span>Home
           </router-link>
-          <div v-if="username" class="navbar-item has-dropdown is-hoverable">
+          <div v-if="token" class="navbar-item has-dropdown is-hoverable">
             <router-link class="navbar-link" :to="'/profile'">
               <span class="nav-icon"><icon name="user"></icon></span>{{username}}
             </router-link>
@@ -55,11 +55,7 @@ export default {
       return this.$store.state.user.token
     },
     username () {
-      var email = this.$store.state.user.email
-      if(email){
-        var index = email.indexOf('@')
-        return email.slice(0, index)
-      }
+      return this.$store.state.user.name
     },
     routePath () {
       return this.$route.path

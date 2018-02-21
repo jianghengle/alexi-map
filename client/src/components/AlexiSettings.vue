@@ -65,7 +65,6 @@ export default {
         }
         this.waiting = false
       }, (response) => {
-        console.log('failed to get latest tiles')
         this.error = 'Failed to get user settings: ' + JSON.stringify(response.body)
         this.waiting = false
       })

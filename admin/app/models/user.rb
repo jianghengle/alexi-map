@@ -22,6 +22,14 @@ class User < ApplicationRecord
           ['Admin', 'Normal']
         end
       end
+      field :country
+      field :state
+      field :city
+      field :affiliation
+      field :employer
+      field :title
+      field :purpose
+      field :hear_from
     end
   end
 

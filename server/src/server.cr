@@ -31,12 +31,24 @@ module AlexiServer
         env.redirect "/index.html"
       end
 
+      post "/register" do |env|
+        HttpAPI::UserController.register(env)
+      end
+
       post "/get_auth_token" do |env|
         HttpAPI::UserController.get_auth_token(env)
       end
 
       get "/get_user_profile" do |env|
         HttpAPI::UserController.get_user_profile(env)
+      end
+
+      post "/update_user_profile" do |env|
+        HttpAPI::UserController.update_user_profile(env)
+      end
+
+      post "/update_user_password" do |env|
+        HttpAPI::UserController.update_user_password(env)
       end
 
       get "/get_user_settings" do |env|

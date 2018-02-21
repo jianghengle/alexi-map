@@ -1,7 +1,10 @@
 <template>
   <div class="login-page">
     <div class="container">
-      <div class="welcome">Welcome to Global Daily Evapo-Transpiration website!</div>
+      <div class="welcome">
+        Thank you for accessing the GloDET data viewer!<br/>
+        Please login or <router-link :to="'/register'">register a new account</router-link>.
+      </div>
 
       <div class="field">
         <p class="control has-icons-left">
@@ -45,7 +48,7 @@
         <a>Forgot your password?</a>
       </div>
       <div>
-        <a>Register new account</a>
+        <router-link :to="'/register'">Register a new account</router-link>
       </div>
     </div>
   </div>
@@ -72,8 +75,10 @@ export default {
       var message = {email: this.email, password: this.password}
       this.$http.post(xHTTPx + '/get_auth_token', message).then(response => {
         var token = response.body.token
+        var name = response.body.name
         Vue.http.headers.common['Authorization'] = token
         this.$store.commit('user/setToken', token)
+        this.$store.commit('user/setName', name)
         this.$store.commit('user/setEmail', this.email)
         if (this.rememberMe) {
           localStorage.setItem('token', token)
