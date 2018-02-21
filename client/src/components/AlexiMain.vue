@@ -75,6 +75,14 @@
           @rightclick="drawSelection">
         </gmap-rectangle>
         <gmap-rectangle
+          v-for="(t, idx) in emptyTiles"
+          v-if="showGrid && t"
+          :key="'empty'+idx"
+          :bounds="t.bounds"
+          :options="emptyGridOptions"
+          @rightclick="drawSelection">
+        </gmap-rectangle>
+        <gmap-rectangle
           v-if="showSelection && selectionBounds"
           :bounds="selectionBounds"
           :draggable="true"
@@ -90,6 +98,13 @@
           :source="t.png"
           :bounds="t.bounds"
           :opacity="tileOpacity">
+        </ground-overlay>
+        <ground-overlay
+          v-for = "(t, i) in emptyTiles"
+          v-if="showGrid && t"
+          :key="'emptyImage'+i"
+          :source="t.src"
+          :bounds="t.bounds">
         </ground-overlay>
       </gmap-map>
     </div>
@@ -187,6 +202,39 @@ import Datepicker from 'vuejs-datepicker'
 import TileWindow from './TileWindow'
 import SaveSettingModal from './modals/SaveSettingModal'
 
+var allTiles = []
+for(var i=1;i<=216;i++){
+  var tile = {
+    num: i,
+    bounds: tileNumToBounds(i),
+    src: tileNumToImage(i)
+  }
+  allTiles.push(tile)
+}
+
+function tileNumToBounds (tileNum) {
+  var x = (tileNum - 1) % 24
+  var y = Math.floor((tileNum - 1) / 24)
+  var north = 75 - (y * 15)
+  var south = north - 15
+  var west = -180 + (x * 15)
+  var east = west + 15
+  if(west == -180){
+    west = -179.999
+  }
+  return {north: north, south: south, east: east, west: west}
+}
+
+function tileNumToImage (tileNum) {
+  var canvas = document.createElement('canvas')
+  canvas.width  = 100
+  canvas.height = 100
+  var ctx=canvas.getContext("2d")
+  ctx.font="10px Arial"
+  ctx.fillText(tileNum.toString(), 10, 20)
+  return canvas.toDataURL("image/png")
+}
+
 export default {
   name: 'alexi-main',
   components: {
@@ -204,6 +252,7 @@ export default {
       mapSize: null,
       showGrid: true,
       gridOptions: {strokeWeight: 0.4, fillOpacity: 0.1},
+      emptyGridOptions : {strokeWeight: 0.1, fillOpacity: 0},
       showSelection: true,
       selectionBounds: {north: 25, south: 20, east: 25, west: 20},
       selectionOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', fillOpacity: 0.1, zIndex: 2},
@@ -295,6 +344,18 @@ export default {
         return []
       var tileNums = this.tilesInDays[this.dateCode]
       return tileNums.map(this.tileNumToBounds)
+    },
+    emptyTiles () {
+      var emptyTiles = allTiles.slice()
+      if(this.tilesInDays && this.tilesInDays[this.dateCode]){
+        var tileNums = this.tilesInDays[this.dateCode]
+        tileNums.forEach(function(n){
+          emptyTiles[n-1] = null
+        })
+      }
+      console.log(emptyTiles)
+      console.log(emptyTiles)
+      return emptyTiles
     },
     tileMatrix () {
       if(!this.selectionBounds)
@@ -432,13 +493,7 @@ export default {
         }
     },
     tileNumToBounds (tileNum) {
-      var x = (tileNum - 1) % 24
-      var y = Math.floor((tileNum - 1) / 24)
-      var north = 75 - (y * 15)
-      var south = north - 15
-      var west = -180 + (x * 15)
-      var east = west + 15
-      return {north: north, south: south, east: east, west: west}
+      return tileNumToBounds(tileNum)
     },
     getTileIndexMatrix (bounds) {
       var northWest = {lat: bounds.north, lng: bounds.west}
