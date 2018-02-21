@@ -76,7 +76,7 @@
         </gmap-rectangle>
         <gmap-rectangle
           v-for="(t, idx) in emptyTiles"
-          v-if="showGrid && t"
+          v-if="showGrid"
           :key="'empty'+idx"
           :bounds="t.bounds"
           :options="emptyGridOptions"
@@ -101,7 +101,7 @@
         </ground-overlay>
         <ground-overlay
           v-for = "(t, i) in emptyTiles"
-          v-if="showGrid && t"
+          v-if="showGrid"
           :key="'emptyImage'+i"
           :source="t.src"
           :bounds="t.bounds">
@@ -202,14 +202,14 @@ import Datepicker from 'vuejs-datepicker'
 import TileWindow from './TileWindow'
 import SaveSettingModal from './modals/SaveSettingModal'
 
-var allTiles = []
+var allTiles = {}
 for(var i=1;i<=216;i++){
   var tile = {
     num: i,
     bounds: tileNumToBounds(i),
     src: tileNumToImage(i)
   }
-  allTiles.push(tile)
+  allTiles[i] = tile
 }
 
 function tileNumToBounds (tileNum) {
@@ -346,15 +346,13 @@ export default {
       return tileNums.map(this.tileNumToBounds)
     },
     emptyTiles () {
-      var emptyTiles = allTiles.slice()
+      var emptyTiles = Object.assign({}, allTiles)
       if(this.tilesInDays && this.tilesInDays[this.dateCode]){
         var tileNums = this.tilesInDays[this.dateCode]
         tileNums.forEach(function(n){
-          emptyTiles[n-1] = null
+          delete emptyTiles[n]
         })
       }
-      console.log(emptyTiles)
-      console.log(emptyTiles)
       return emptyTiles
     },
     tileMatrix () {
