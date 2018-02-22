@@ -202,15 +202,47 @@ import Datepicker from 'vuejs-datepicker'
 import TileWindow from './TileWindow'
 import SaveSettingModal from './modals/SaveSettingModal'
 
+function makeTileNums (start, end) {
+  var ret = []
+  for(var i=start;i<=end;i++){
+    ret.push(i)
+  }
+  return ret
+}
+
+var allTileNums = []
+allTileNums = allTileNums.concat(makeTileNums(1, 24))
+allTileNums = allTileNums.concat(makeTileNums(26, 33))
+allTileNums = allTileNums.concat(makeTileNums(36, 47))
+allTileNums = allTileNums.concat(makeTileNums(52, 56))
+allTileNums = allTileNums.concat(makeTileNums(60, 70))
+allTileNums = allTileNums.concat(makeTileNums(77, 80))
+allTileNums = allTileNums.concat(makeTileNums(83, 93))
+allTileNums = allTileNums.concat(makeTileNums(103, 105))
+allTileNums = allTileNums.concat(makeTileNums(107, 112))
+allTileNums = allTileNums.concat(makeTileNums(114, 117))
+allTileNums = allTileNums.concat(makeTileNums(127, 130))
+allTileNums = allTileNums.concat(makeTileNums(133, 136))
+allTileNums = allTileNums.concat(makeTileNums(139, 143))
+allTileNums = allTileNums.concat(makeTileNums(152, 154))
+allTileNums = allTileNums.concat(makeTileNums(157, 160))
+allTileNums = allTileNums.concat(makeTileNums(164, 167))
+allTileNums = allTileNums.concat(makeTileNums(176, 177))
+allTileNums = allTileNums.concat(makeTileNums(182, 182))
+allTileNums = allTileNums.concat(makeTileNums(188, 192))
+allTileNums = allTileNums.concat(makeTileNums(200, 200))
+allTileNums = allTileNums.concat(makeTileNums(216, 216))
+
+
 var allTiles = {}
-for(var i=1;i<=216;i++){
+allTileNums.forEach(function(i){
   var tile = {
     num: i,
     bounds: tileNumToBounds(i),
     src: tileNumToImage(i)
   }
   allTiles[i] = tile
-}
+})
 
 function tileNumToBounds (tileNum) {
   var x = (tileNum - 1) % 24
@@ -227,11 +259,20 @@ function tileNumToBounds (tileNum) {
 
 function tileNumToImage (tileNum) {
   var canvas = document.createElement('canvas')
-  canvas.width  = 100
-  canvas.height = 100
+  canvas.width  = 200
+  if(tileNum >=1 && tileNum <=24){
+    canvas.height = 500
+  }else if(tileNum >= 25 && tileNum <= 48){
+    canvas.height = 260
+  }else if(tileNum >= 193 && tileNum <= 216){
+    canvas.height = 260
+  }else{
+    canvas.height = 200
+  }
+
   var ctx=canvas.getContext("2d")
-  ctx.font="10px Arial"
-  ctx.fillText(tileNum.toString(), 10, 20)
+  ctx.font="20px Arial"
+  ctx.fillText(tileNum.toString(), 20, 40)
   return canvas.toDataURL("image/png")
 }
 
@@ -252,7 +293,7 @@ export default {
       mapSize: null,
       showGrid: true,
       gridOptions: {strokeWeight: 0.4, fillOpacity: 0.1},
-      emptyGridOptions : {strokeWeight: 0.1, fillOpacity: 0},
+      emptyGridOptions : {strokeWeight: 0.2, fillOpacity: 0},
       showSelection: true,
       selectionBounds: {north: 25, south: 20, east: 25, west: 20},
       selectionOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', fillOpacity: 0.1, zIndex: 2},
