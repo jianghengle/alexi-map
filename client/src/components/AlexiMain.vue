@@ -343,7 +343,7 @@ export default {
       if(!this.tilesInDays || !this.tilesInDays[this.dateCode])
         return []
       var tileNums = this.tilesInDays[this.dateCode]
-      return tileNums.map(this.tileNumToBounds)
+      return tileNums.map(tileNumToBounds)
     },
     emptyTiles () {
       var emptyTiles = Object.assign({}, allTiles)
@@ -489,9 +489,6 @@ export default {
           east: e.b.f,
           west: e.b.b
         }
-    },
-    tileNumToBounds (tileNum) {
-      return tileNumToBounds(tileNum)
     },
     getTileIndexMatrix (bounds) {
       var northWest = {lat: bounds.north, lng: bounds.west}

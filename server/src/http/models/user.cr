@@ -84,8 +84,21 @@ module AlexiServer
         admins = admins.as(Array)
         return if admins.empty?
         emails = admins.map { |a| a.email.to_s }
-        puts emails.to_json
-        puts new_user.to_json(subscribe_wfi, subscribe_ndmc)
+        admins_json = emails.to_json
+        new_user_json = new_user.to_json(subscribe_wfi, subscribe_ndmc)
+
+        return unless ENV.has_key?("SEND_EMAIL_DIR")
+        send_email_dir = ENV["SEND_EMAIL_DIR"]
+        return unless File.directory?(send_email_dir)
+        send_email_script = send_email_dir + "/sendemail.py"
+        return unless File.file?(send_email_script)
+        input_text = admins_json + "\n" + new_user_json
+        File.write(send_email_dir + "/emailinput.txt", input_text)
+        command = "python \"#{send_email_script}\""
+        puts command
+        io = IO::Memory.new
+        Process.run(command, shell: true, output: io)
+        puts io.to_s
       end
 
       def self.update_user(user)
