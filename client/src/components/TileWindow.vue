@@ -4,13 +4,17 @@
       <div class="columns image-options">
         <div class="column">
           <span class="image-input">
+            <span class="select map-select">
+              <select v-model="imageOption">
+                <option>Grids + Selection</option>
+                <option>Grids</option>
+                <option>Selection</option>
+                <option>None</option>
+              </select>
+            </span>
+            &nbsp;
             <label class="image-input-label">Tile Size</label>
             <input class="input image-input-input" type="number" step="10" v-model.number="tileSize">
-            &nbsp;
-            <label class="checkbox map-option">
-              <input type="checkbox" v-model="showGrid">
-              Grid
-            </label>
           </span>
         </div>
         <div class="column">
@@ -46,7 +50,7 @@
           <div v-for="(row, i) in images" :key="'row-' + i" class="image-row" :style="{'height': tileSize+'px'}">
             <a v-for="(cell, j) in row" :key="cell.id"
               :style="{'height': tileSize+'px', 'width': tileSize+'px'}"
-              :class="{'tile-border': showGrid}"
+              :class="{'tile-border': imageOption.includes('Grids')}"
               class="image-cell"
               :href="cell.tif">
               <img :src="cell.png"
@@ -56,7 +60,7 @@
             </a>
           </div>
           <div class="selection-on-image"
-            v-show="showSelection"
+            v-show="imageOption.includes('Selection')"
             :style="{
               'top': selection.top + 'px',
               'left': selection.left + 'px',
@@ -71,12 +75,12 @@
               {{a.value}}&nbsp;<span v-if="i==0">mm/day</span>
             </div>
           </div>
-          <div class="y-annotation" v-if="showGrid" v-for="a in yAnnotations" :style="{'top': a.top + 'px'}">
+          <div class="y-annotation" v-if="imageOption.includes('Grids')" v-for="a in yAnnotations" :style="{'top': a.top + 'px'}">
             <div class="y-label">
               <span v-if="a.label == '0'">&nbsp;</span>{{a.label}}
             </div>
           </div>
-          <div class="x-annotation" v-if="showGrid" v-for="a in xAnnotations" :style="{'left': a.left + 'px'}">
+          <div class="x-annotation" v-if="imageOption.includes('Grids')" v-for="a in xAnnotations" :style="{'left': a.left + 'px'}">
             <div class="x-label">
               <span v-if="a.label == '0'">&nbsp;</span>{{a.label}}
             </div>
@@ -106,13 +110,13 @@ export default {
     Datepicker,
     ConfirmModal
   },
-  props: ['wid', 'mainDate', 'tileMatrix', 'selectionBounds', 'mainShowGrid', 'showSelection', 'dateDisabled', 'mainTileSize'],
+  props: ['wid', 'mainDate', 'tileMatrix', 'selectionBounds', 'mainImageOption', 'dateDisabled', 'mainTileSize'],
   data () {
     return {
       ready: false,
       date: new Date(),
       tileSize: 200,
-      showGrid: true,
+      imageOption: 'Grids + Selection',
       confirmModal: {
         opened: false,
         message: '',
@@ -128,11 +132,11 @@ export default {
     mainTileSize: function (val) {
       this.tileSize = val
     },
-    showGrid: function (val) {
-      this.$emit('tile-window-show-grid-changed', val)
+    imageOption: function (val) {
+      this.$emit('tile-window-image-option-changed', val)
     },
-    mainShowGrid: function (val) {
-      this.showGrid = val
+    mainImageOption: function (val) {
+      this.imageOption = val
     },
     mainDate: function (val) {
       if(this.wid == 0){
@@ -395,7 +399,7 @@ export default {
   mounted () {
     this.date = this.mainDate
     this.tileSize = this.mainTileSize
-    this.showGrid = this.mainShowGrid
+    this.imageOption = this.mainImageOption
     this.ready = true
   }
 }

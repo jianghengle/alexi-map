@@ -5,11 +5,6 @@
         <div v-if="token">
           <label>Map Height</label>
           <input class="input map-option-input" type="number" step="20" v-model.number="mapHeight">
-          &nbsp;&nbsp;
-          <label class="checkbox map-option">
-            <input type="checkbox" v-model="showGrid">
-            Grid
-          </label>
         </div>
       </div>
       <div class="column date-picker-column">
@@ -67,7 +62,7 @@
         @zoom_changed="mapZoomChanged"
       >
         <gmap-rectangle
-          v-if="showGrid"
+          v-if="mapOption.includes('Grids')"
           v-for="(bs, idx) in gridBounds"
           :key="'bs'+idx"
           :bounds="bs"
@@ -76,14 +71,14 @@
         </gmap-rectangle>
         <gmap-rectangle
           v-for="(t, idx) in emptyTiles"
-          v-if="showGrid"
+          v-if="mapOption.includes('All Grids')"
           :key="'empty'+idx"
           :bounds="t.bounds"
           :options="emptyGridOptions"
           @rightclick="drawSelection">
         </gmap-rectangle>
         <gmap-rectangle
-          v-if="showSelection && selectionBounds"
+          v-if="mapOption.includes('Selection')"
           :bounds="selectionBounds"
           :draggable="true"
           :editable="true"
@@ -101,7 +96,7 @@
         </ground-overlay>
         <ground-overlay
           v-for = "(t, i) in emptyTiles"
-          v-if="showGrid"
+          v-if="mapOption.includes('All Grids')"
           :key="'emptyImage'+i"
           :source="t.src"
           :bounds="t.bounds">
@@ -111,10 +106,14 @@
     <div class="map-options columns">
       <div class="column map-options-column">
         <span v-if="token && selectionBounds">
-          <label class="checkbox map-option">
-            <input type="checkbox" v-model="showSelection">
-            Selection
-          </label>
+          <span class="select map-select">
+            <select v-model="mapOption">
+              <option>All Grids + Selection</option>
+              <option>Available Grids + Selection</option>
+              <option>Selection</option>
+              <option>None</option>
+            </select>
+          </span>
           &nbsp;
           <label class="map-option">
             Opacity
@@ -166,15 +165,14 @@
           :wid="wid"
           :main-date="date"
           :tile-matrix="tileMatrix"
-          :main-show-grid="showGrid"
-          :show-selection="showSelection"
           :date-disabled="dateDisabled"
           :main-tile-size="tileSize"
+          :main-image-option="imageOption"
           :selection-bounds="selectionBounds"
           @tile-window-date-changed="tileWindowDateChanged"
           @tile-window-deleted="tileWindowDeleted"
           @tile-window-tile-size-changed="tileWindowTileSizeChanged"
-          @tile-window-show-grid-changed="tileWindowShowGridChanged">
+          @tile-window-image-option-changed="tileWindowImageOptionChanged">
         </tile-window>
       </div>
       <div class="buttons-row columns" v-if="tileMatrix && token">
@@ -233,7 +231,6 @@ allTileNums = allTileNums.concat(makeTileNums(188, 192))
 allTileNums = allTileNums.concat(makeTileNums(200, 200))
 allTileNums = allTileNums.concat(makeTileNums(216, 216))
 
-
 var allTiles = {}
 allTileNums.forEach(function(i){
   var tile = {
@@ -291,14 +288,14 @@ export default {
       newMapCenter: {lat: 22.5, lng: 22.5},
       mapZoom: 3,
       mapSize: null,
-      showGrid: true,
       gridOptions: {strokeWeight: 0.4, fillOpacity: 0.1},
       emptyGridOptions : {strokeWeight: 0.2, fillOpacity: 0},
-      showSelection: true,
       selectionBounds: {north: 25, south: 20, east: 25, west: 20},
       selectionOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', fillOpacity: 0.1, zIndex: 2},
       tileOpacity: 0.6,
       tileSize: 200,
+      mapOption: 'All Grids + Selection',
+      imageOption: 'Grids + Selection',
       date: new Date(),
       tileWindows: [],
       userSettings: [],
@@ -594,8 +591,8 @@ export default {
     tileWindowTileSizeChanged (tileSize) {
       this.tileSize = tileSize
     },
-    tileWindowShowGridChanged (showGrid) {
-      this.showGrid = showGrid
+    tileWindowImageOptionChanged (imageOption) {
+      this.imageOption = imageOption
     },
     applySetting (setting) {
       this.mapHeight = setting.mapHeight
@@ -603,8 +600,6 @@ export default {
       this.mapCenter = {lat: latlng[0], lng: latlng[1]}
       this.newMapCenter = {lat: latlng[0], lng: latlng[1]}
       this.mapZoom = setting.mapZoom
-      this.showGrid = setting.showGrid
-      this.showSelection = setting.showSelection
       this.tileOpacity = setting.tileOpacity
       if(setting.selection){
         var nsew = setting.selection.split(',').map(parseFloat)
@@ -616,14 +611,14 @@ export default {
       if(setting.date){
         this.date = setting.date
       }
+      this.mapOption = setting.mapOption
+      this.imageOption = setting.imageOption
     },
     collectSetting () {
       var setting = {}
       setting.mapHeight = this.mapHeight
       setting.mapCenter = [this.newMapCenter.lat, this.newMapCenter.lng].join(', ')
       setting.mapZoom = this.mapZoom
-      setting.showGrid = this.showGrid
-      setting.showSelection = this.showSelection
       setting.tileOpacity = this.tileOpacity
       var b = this.selectionBounds
       if(b){
@@ -633,6 +628,8 @@ export default {
       }
       setting.tileSize = this.tileSize
       setting.date = this.date
+      setting.mapOption = this.mapOption
+      setting.imageOption = this.imageOption
       return setting
     },
     loadSetting (setting) {
@@ -708,6 +705,10 @@ export default {
 .map-option-input {
   width: 80px;
   display: inline-block;
+  margin-top: -6px;
+}
+
+.map-select {
   margin-top: -6px;
 }
 

@@ -14,6 +14,16 @@ class Setting < ApplicationRecord
       field :tile_size
       field :is_default
       field :name
+      field :map_option, :enum do
+        enum do
+          ['All Grids + Selection', 'Available Grids + Selection', 'Selection', 'None']
+        end
+      end
+      field :image_option, :enum do
+        enum do
+          ['Grids + Selection', 'Grids', 'Selection', 'None']
+        end
+      end
     end
   end
 end

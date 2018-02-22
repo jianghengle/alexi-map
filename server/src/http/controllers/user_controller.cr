@@ -126,11 +126,11 @@ module AlexiServer
           setting_data.map_height = get_param!(ctx, "mapHeight").to_i
           setting_data.map_center = get_param!(ctx, "mapCenter")
           setting_data.map_zoom = get_param!(ctx, "mapZoom").to_i
-          setting_data.show_grid = get_param!(ctx, "showGrid") == "true"
-          setting_data.show_selection = get_param!(ctx, "showSelection") == "true"
           setting_data.tile_opacity = get_param!(ctx, "tileOpacity").to_f
           setting_data.selection = get_param!(ctx, "selection")
           setting_data.tile_size = get_param!(ctx, "tileSize").to_i
+          setting_data.map_option = get_param!(ctx, "mapOption")
+          setting_data.image_option = get_param!(ctx, "imageOption")
           Setting.save_setting(user, id, setting_data)
           {ok: true}.to_json
         rescue ex : InsufficientParameters

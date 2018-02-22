@@ -96,8 +96,8 @@ export default {
         mapHeight: this.setting.mapHeight,
         mapCenter: this.setting.mapCenter,
         mapZoom: this.setting.mapZoom,
-        showGrid: this.setting.showGrid,
-        showSelection: this.setting.showSelection,
+        mapOption: this.setting.mapOption,
+        imageOption: this.setting.imageOption,
         tileOpacity: this.setting.tileOpacity,
         selection: this.setting.selection,
         tileSize: this.setting.tileSize

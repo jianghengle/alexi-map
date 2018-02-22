@@ -38,6 +38,20 @@
     </div>
 
     <div class="field">
+      <label class="label">Map Option</label>
+      <div class="control">
+        <div class="select">
+          <select v-model="mapOption">
+            <option>All Grids + Selection</option>
+            <option>Available Grids + Selection</option>
+            <option>Selection</option>
+            <option>None</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
       <label class="label">Selection (North, South, East, West)</label>
       <p class="control">
         <input class="input text-field" type="text" v-model="selection">
@@ -59,21 +73,17 @@
     </div>
 
     <div class="field">
-      <p class="control">
-        <label class="checkbox">
-          <input type="checkbox" v-model="showGrid">
-          Show Grid
-        </label>
-      </p>
-    </div>
-
-    <div class="field">
-      <p class="control">
-        <label class="checkbox">
-          <input type="checkbox" v-model="showSelection">
-          Show Selection
-        </label>
-      </p>
+      <label class="label">Image Option</label>
+      <div class="control">
+        <div class="select">
+          <select v-model="imageOption">
+            <option>Grids + Selection</option>
+            <option>Grids</option>
+            <option>Selection</option>
+            <option>None</option>
+          </select>
+        </div>
+      </div>
     </div>
 
     <div class="field is-grouped">
@@ -114,11 +124,11 @@ export default {
       mapHeight: 600,
       mapCenter: "22.5, 22.5",
       mapZoom: 3,
-      showGrid: true,
-      showSelection: true,
+      mapOption: 'All Grids + Selection',
       tileOpacity: 0.6,
       selection: '35, 10, 35, 10',
       tileSize: 200,
+      imageOption: 'Grids + Selection',
       confirmModal: {
         opened: false,
         message: '',
@@ -136,11 +146,11 @@ export default {
         || this.mapHeight !=this.setting.mapHeight
         || this.mapCenter != this.setting.mapCenter
         || this.mapZoom != this.setting.mapZoom
-        || this.showGrid != this.setting.showGrid
-        || this.showSelection != this.setting.showSelection
         || this.tileOpacity != this.setting.tileOpacity
         || this.selection != this.setting.selection
         || this.tileSize != this.setting.tileSize
+        || this.mapOption != this.setting.mapOption
+        || this.imageOption != this.setting.imageOption
     }
   },
   watch: {
@@ -151,11 +161,11 @@ export default {
         this.mapHeight = val.mapHeight
         this.mapCenter = val.mapCenter
         this.mapZoom = val.mapZoom
-        this.showGrid = val.showGrid
-        this.showSelection = val.showSelection
         this.tileOpacity = val.tileOpacity
         this.selection = val.selection
         this.tileSize = val.tileSize
+        this.mapOption = val.mapOption
+        this.imageOption = val.imageOption
       }
     },
   },
@@ -169,11 +179,11 @@ export default {
         mapHeight: this.mapHeight,
         mapCenter: this.mapCenter.trim(),
         mapZoom: this.mapZoom,
-        showGrid: this.showGrid,
-        showSelection: this.showSelection,
         tileOpacity: this.tileOpacity,
         selection: this.selection.trim(),
-        tileSize: this.tileSize
+        tileSize: this.tileSize,
+        mapOption: this.mapOption,
+        imageOption: this.imageOption
       }
       this.$http.post(xHTTPx + '/save_user_setting', message).then(response => {
         this.waiting= false

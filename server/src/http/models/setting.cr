@@ -6,13 +6,13 @@ module AlexiServer
         field :map_height, Int32
         field :map_center, String
         field :map_zoom, Int32
-        field :show_grid, Bool
-        field :show_selection, Bool
         field :tile_opacity, Float64
         field :selection, String
         field :tile_size, Int32
         field :is_default, Bool
         field :name, String
+        field :map_option, String
+        field :image_option, String
       end
 
       def to_json
@@ -23,13 +23,13 @@ module AlexiServer
           str << "\"mapHeight\":" << @map_height << ","
           str << "\"mapCenter\":" << @map_center.to_json << ","
           str << "\"mapZoom\":" << @map_zoom << ","
-          str << "\"showGrid\":" << @show_grid.to_s << ","
-          str << "\"showSelection\":" << @show_selection.to_s << ","
           str << "\"tileOpacity\":" << @tile_opacity << ","
           str << "\"selection\":" << @selection.to_json << ","
           str << "\"tileSize\":" << @tile_size << ","
           str << "\"isDefault\":" << @is_default << ","
-          str << "\"name\":" << @name.to_json
+          str << "\"name\":" << @name.to_json << ","
+          str << "\"mapOption\":" << @map_option.to_json << ","
+          str << "\"imageOption\":" << @image_option.to_json
           str << "}"
         end
         result
@@ -68,11 +68,11 @@ module AlexiServer
           setting.map_height = 600
           setting.map_center = "22.5, 22.5"
           setting.map_zoom = 3
-          setting.show_grid = true
-          setting.show_selection = true
           setting.tile_opacity = 0.6
           setting.selection = "25, 20, 25, 20"
           setting.tile_size = 200
+          setting.map_option = "All Grids + Selection"
+          setting.image_option = "Grids + Selection"
         else
           setting = setting_data.as(Setting)
         end
@@ -89,12 +89,12 @@ module AlexiServer
         setting.map_height = setting_data.map_height
         setting.map_center = setting_data.map_center
         setting.map_zoom = setting_data.map_zoom
-        setting.show_grid = setting_data.show_grid
-        setting.show_selection = setting_data.show_selection
         setting.tile_opacity = setting_data.tile_opacity
         setting.selection = setting_data.selection
         setting.tile_size = setting_data.tile_size
         setting.name = setting_data.name
+        setting.map_option = setting_data.map_option
+        setting.image_option = setting_data.image_option
         Setting.remove_default(user) if (!setting.is_default && setting_data.is_default)
         setting.is_default = setting_data.is_default
         changeset = Repo.update(setting)
