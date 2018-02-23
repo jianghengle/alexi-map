@@ -74,6 +74,17 @@ module AlexiServer
         end
         n
       end
+
+      def self.get_all_downloads
+        downloads = Repo.all(Download)
+        return [] of Download if downloads.nil?
+        downloads.as(Array)
+      end
+
+      def self.delete_download(download)
+        changeset = Repo.delete(download)
+        raise changeset.errors.to_s unless changeset.valid?
+      end
     end
   end
 end

@@ -20,6 +20,7 @@ module Repo
 end
 
 Query = Crecto::Repo::Query
+Multi = Crecto::Multi
 
 module AlexiServer
   class Server

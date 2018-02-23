@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180222200202) do
+ActiveRecord::Schema.define(version: 20180223144405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,20 @@ ActiveRecord::Schema.define(version: 20180222200202) do
     t.datetime "updated_at", null: false
     t.index ["key"], name: "index_downloads_on_key", unique: true, using: :btree
     t.index ["user_id"], name: "index_downloads_on_user_id", using: :btree
+  end
+
+  create_table "records", force: :cascade do |t|
+    t.integer  "year"
+    t.integer  "day"
+    t.integer  "tile"
+    t.string   "suffix"
+    t.integer  "used"
+    t.datetime "last_used"
+    t.datetime "created"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_records_on_user_id", using: :btree
   end
 
   create_table "settings", force: :cascade do |t|
@@ -82,5 +96,6 @@ ActiveRecord::Schema.define(version: 20180222200202) do
   end
 
   add_foreign_key "downloads", "users"
+  add_foreign_key "records", "users"
   add_foreign_key "settings", "users"
 end
