@@ -20,10 +20,16 @@ module AlexiServer
     def initialize
       begin
         downloads = HttpAPI::Download.get_all_downloads
-        return if downloads.empty?
+        if downloads.empty?
+          puts "No downloads at all"
+          puts "Done database maintainence!"
+          return
+        end
 
         now = Time.now
         download_ids = [] of Int32 | Int64 | Nil
+        moved = 0
+
         downloads.each do |download|
           download = download.as(HttpAPI::Download)
           span = now - download.created_at.as(Time)
@@ -36,12 +42,19 @@ module AlexiServer
             download_ids << download.id
           else
             HttpAPI::Record.create_from_download(download)
+            moved = moved + 1
           end
         end
 
-        return if download_ids.empty?
-        query = Query.where(:id, download_ids)
-        Repo.delete_all(HttpAPI::Download, query)
+        puts "Moved #{moved} records"
+
+        if download_ids.empty?
+          puts "No download needs to be deleted"
+        else
+          query = Query.where(:id, download_ids)
+          Repo.delete_all(HttpAPI::Download, query)
+          puts "Deleted #{download_ids.size} downloads"
+        end
         puts now
         puts (Time.now - now)
         puts "Done database maintainence!"
