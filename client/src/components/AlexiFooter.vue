@@ -3,7 +3,7 @@
     <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">
-      <a href="http://waterforfood.nebraska.edu/"><img src="static/logos/DWFI.png" height="250" class="logo"></a>
+      <a href="http://waterforfood.nebraska.edu/"><img src="static/logos/DWFI.png" width="250" class="logo dwfi"></a>
       <a href="https://www.ars.usda.gov"><img src="static/logos/USDA ARS.png" width="250" class="logo"></a>
       <a href="https://www.nasa.gov/"><img src="static/logos/NASA.png" width="100" class="logo"></a>
       <a href="http://essic.umd.edu/joom2/"><img src="static/logos/ESSIC.jpg" width="150" class="logo essic"></a>
@@ -30,6 +30,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.dwfi {
+  position: relative;
+  top: 20px;
+  left: -10px;
+}
 
 .essic {
   margin-left: 30px;

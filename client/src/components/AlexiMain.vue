@@ -97,7 +97,7 @@
         <ground-overlay
           v-for = "(t, i) in emptyTiles"
           v-if="mapOption.includes('All Grids')"
-          :key="'emptyImage'+i"
+          :key="'emptyImage' + i"
           :source="t.src"
           :bounds="t.bounds">
         </ground-overlay>
