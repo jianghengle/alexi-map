@@ -45,7 +45,7 @@
       </div>
 
       <div>
-        <a>Forgot your password?</a>
+        <a :href="passwordLink">Forgot your password?</a>
       </div>
       <div>
         <router-link :to="'/register'">Register a new account</router-link>
@@ -65,7 +65,8 @@ export default {
       password: '',
       rememberMe: '',
       error: '',
-      waiting: false
+      waiting: false,
+      passwordLink: xHTTPx.endsWith(':3000') ?  xHTTPx.replace(':3000', ':3001') +'/users/password/new' : xHTTPx + '/users/password/new'
     }
   },
   methods: {
