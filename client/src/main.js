@@ -19,6 +19,9 @@ import 'vue-awesome/icons/user-o'
 import 'vue-awesome/icons/user'
 import 'vue-awesome/icons/spinner'
 import 'vue-awesome/icons/home'
+import 'vue-awesome/icons/info'
+import 'vue-awesome/icons/book'
+import 'vue-awesome/icons/cubes'
 import Icon from 'vue-awesome/components/Icon'
 Vue.component('icon', Icon)
 

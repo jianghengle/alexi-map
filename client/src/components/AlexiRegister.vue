@@ -164,7 +164,7 @@
         <div class="control">
           <label class="checkbox">
             <input type="checkbox" v-model="subscribeWFI">
-            Sign up for emails from <a href="http://waterforfood.nebraska.edu/">Robert B. Daugherty Water for Food Global Institute at the University of Nebraska</a>
+            Sign up for emails from the <a href="http://waterforfood.nebraska.edu/" target="_blank">Robert B. Daugherty Water for Food Global Institute at the University of Nebraska</a>
           </label>
         </div>
       </div>
@@ -173,7 +173,7 @@
         <div class="control">
           <label class="checkbox">
             <input type="checkbox" v-model="subscribeNDMC">
-            Sign up for emails from <a href="http://drought.unl.edu">the National Drought Mitigation Center at the University of Nebraska</a>
+            Sign up for emails from the <a href="http://drought.unl.edu" target="_blank">National Drought Mitigation Center at the University of Nebraska</a>
           </label>
         </div>
       </div>
@@ -205,7 +205,7 @@ var stateList = ['Alabama','Alaska','American Samoa','Arizona','Arkansas','Calif
 
 var affiliationList = ['University/Research Institution', 'Government Agency', 'Non-governmental Organization/Non-profit', 'Private Sector/For-profit', 'Agricultural Producer/Farmer', 'Other']
 
-var purposeList = ['Scholarly Research/Publication in Academic Journal', 'Establishing/Administering Public Policy', 'Information Dissemination/Public Communications', 'Agricultural/Field Management', 'Drought Monitoring', 'Consulting/For-profit', 'Other']
+var purposeList = ['Scholarly Research/Publication in Academic Journal', 'Establishing/Administering Public Policy', 'Information Dissemination/Public Communications', 'Agricultural/Field Water Management', 'Drought Monitoring', 'Consulting/For-profit', 'Other']
 
 var hearFromList = ['Internet search', 'Facebook', 'LinkedIn', 'Twitter', 'Robert B. Daugherty Water for Food Global Institute website', 'National Drought Mitigation Center website', 'ICBA website', 'Other' ]
 

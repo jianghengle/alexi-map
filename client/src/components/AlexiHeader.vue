@@ -3,18 +3,31 @@
     <nav class="navbar is-transparent">
       <div class="navbar-brand">
         <router-link class="navbar-item is-primary app-name" :to="'/'">
+          <img src="static/logo.png" width="30">&nbsp;
           Global Daily Evapo-Transpiration (GloDET)
         </router-link>
       </div>
 
       <div class="navbar-menu is-active">
         <div class="navbar-start">
+          <router-link class="navbar-item" :to="'/'">
+            Home
+          </router-link>
+          <router-link class="navbar-item" :to="'/about'">
+            About
+          </router-link>
+          <router-link class="navbar-item" :to="'/documentation'">
+            Documentation
+          </router-link>
+          <router-link class="navbar-item" :to="'/partners_n_projects'">
+            Partners & Projects
+          </router-link>
+          <router-link class="navbar-item" :to="'/help'">
+            Help
+          </router-link>
         </div>
 
         <div class="navbar-end">
-          <router-link v-if="routePath != '/'" class="navbar-item" :to="'/'">
-            <span class="nav-icon"><icon name="home"></icon></span>Home
-          </router-link>
           <div v-if="token" class="navbar-item has-dropdown is-hoverable">
             <router-link class="navbar-link" :to="'/profile'">
               <span class="nav-icon"><icon name="user"></icon></span>{{username}}

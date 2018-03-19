@@ -66,7 +66,7 @@ export default {
       rememberMe: '',
       error: '',
       waiting: false,
-      passwordLink: xHTTPx.endsWith(':3000') ?  xHTTPx.replace(':3000', ':3001') +'/users/password/new' : xHTTPx + '/users/password/new'
+      passwordLink: xHTTPx.endsWith(':3000') ?  xHTTPx.replace(':3000', ':3001') +'/users/password/new' : xHTTPx + ':3001/users/password/new'
     }
   },
   methods: {

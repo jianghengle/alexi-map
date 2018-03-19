@@ -409,8 +409,6 @@ export default {
 <style lang="scss" scoped>
 
 .images-box {
-  margin-left: 15px;
-  margin-right: 15px;
   margin-bottom: 20px;
   padding-left: 40px;
   padding-right: 50px;

@@ -1,5 +1,6 @@
 <template>
   <div class="main-window">
+    <alexi-introduction></alexi-introduction>
     <div class="map-options columns">
       <div class="column">
         <div v-if="token">
@@ -199,6 +200,7 @@ import DateForm from 'dateformat'
 import Datepicker from 'vuejs-datepicker'
 import TileWindow from './TileWindow'
 import SaveSettingModal from './modals/SaveSettingModal'
+import AlexiIntroduction from './AlexiIntroduction'
 
 function makeTileNums (start, end) {
   var ret = []
@@ -278,7 +280,8 @@ export default {
   components: {
     Datepicker,
     TileWindow,
-    SaveSettingModal
+    SaveSettingModal,
+    AlexiIntroduction
   },
   data () {
     return {
@@ -690,7 +693,11 @@ export default {
 <style lang="scss" scoped>
 
 .main-window {
-  padding-bottom: 20px;
+  padding: 20px;
+}
+
+.introduction {
+  margin-bottom: 20px;
 }
 
 .map-options {

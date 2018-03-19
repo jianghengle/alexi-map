@@ -50,6 +50,10 @@ body {
 
 .main-body {
   min-height: 480px;
+
+  .content {
+    margin-top: 30px;
+  }
 }
 
 .date-picker-wrapper {
