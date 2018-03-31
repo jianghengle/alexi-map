@@ -185,7 +185,7 @@
 
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-link" :class="{'is-loading': waiting}" :disabled="!canSubmit" @click="register">Submit</button>
+          <button class="button is-primary" :class="{'is-loading': waiting}" :disabled="!canSubmit" @click="register">Submit</button>
         </div>
         <div class="control">
           <button class="button is-text"><router-link :to="'/login'">Back to Login</router-link></button>

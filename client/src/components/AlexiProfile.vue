@@ -145,7 +145,7 @@
 
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-link" :class="{'is-loading': waiting}" :disabled="!canUpdateProfile" @click="updateProfile">Update Profile</button>
+          <button class="button is-primary" :class="{'is-loading': waiting}" :disabled="!canUpdateProfile" @click="updateProfile">Update Profile</button>
         </div>
       </div>
 
@@ -196,7 +196,7 @@
 
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-link" :class="{'is-loading': waiting}" :disabled="!passwordValid || !passwordsMatch" @click="changePassword">Change Password</button>
+          <button class="button is-primary" :class="{'is-loading': waiting}" :disabled="!passwordValid || !passwordsMatch" @click="changePassword">Change Password</button>
         </div>
       </div>
 

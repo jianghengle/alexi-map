@@ -40,6 +40,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "~bulma/sass/utilities/initial-variables";
+$primary: #05485A;
 @import "~bulma";
 
 body {

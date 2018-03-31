@@ -178,7 +178,7 @@
       </div>
       <div class="buttons-row columns" v-if="tileMatrix && token">
         <div class="column">
-          <a class="button is-info" @click="addTileWindow">
+          <a class="button is-primary" @click="addTileWindow">
             Add Window
           </a>
         </div>
@@ -758,6 +758,8 @@ export default {
 .map-window {
   margin-top: -10px;
   margin-bottom: 0px;
+  margin-left: -20px;
+  margin-right: -20px;
 }
 
 .alexi-window {

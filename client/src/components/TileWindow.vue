@@ -38,7 +38,7 @@
           </a>
         </div>
         <div class="column">
-          <a class="button is-info" v-if="token" @click="downloadAll">
+          <a class="button is-primary" v-if="token" @click="downloadAll">
             Download All Tiles
           </a>
           <a class="button delete delete-button" @click="deleteWindow" v-if="wid != 0"></a>

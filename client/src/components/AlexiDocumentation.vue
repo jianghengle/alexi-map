@@ -1,22 +1,9 @@
 <template>
   <div class="login-page">
     <div class="container">
-      <div class="content">
-        <h1>Documentation</h1>
-        <p>
-Make material developed
-for in-country workshops
-available for download.
-Track number of
-downloads, and follow up
-with electronic surveys to
-registrant’s email address.
-Include PDF’s of training
-slide shows, videos of
-training sessions, and any
-handouts/ worksheets
-from training.
-        </p>
+      <div class="content text-content">
+        <h4 class="p-header">Operational ET Determinations in the MENA Region for ESI and Water Productivity</h4>
+        <embed src="static/GloDET_Training.pdf" width="1000px'" height="1000px" class="pdf-body" type="application/pdf" />
       </div>
     </div>
   </div>
@@ -32,5 +19,14 @@ export default {
 
 <style lang="scss" scoped>
 
+.p-header{
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  color: #05485A;
+}
+
+.text-content {
+  margin-bottom: 30px;
+}
 
 </style>

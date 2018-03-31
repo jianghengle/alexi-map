@@ -40,7 +40,7 @@
 
       <div class="field">
         <p class="control">
-          <button class="button" :class="{'is-loading': waiting}" @click="login">Login</button>
+          <button class="button is-primary" :class="{'is-loading': waiting}" @click="login">Login</button>
         </p>
       </div>
 
