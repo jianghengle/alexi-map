@@ -11,6 +11,7 @@ Vue.use(VueResource)
 import 'vue-awesome/icons/question'
 import 'vue-awesome/icons/chevron-left'
 import 'vue-awesome/icons/chevron-right'
+import 'vue-awesome/icons/chevron-up'
 import 'vue-awesome/icons/chevron-down'
 import 'vue-awesome/icons/envelope'
 import 'vue-awesome/icons/key'

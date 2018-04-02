@@ -1,8 +1,11 @@
 <template>
-  <div class="introduction-block">
+  <div class="introduction-block" :class="{'block-closed': !open}">
     <div class="content margin-less">
       <h4 class="p-header clickable" @click="open = !open">Welcome to the GloDET Data Explorer
-        <span class="inline-icon"><icon name="chevron-down"></icon></span>
+        <span class="inline-icon">
+          <icon name="chevron-down" v-if="!open"></icon>
+          <icon name="chevron-up" v-if="open"></icon>
+        </span>
       </h4>
       <div v-show="open">
         <p>GloDET is a free portal to view and download global daily evapotranspiration spatial datasets. The data is calculated by the ALEXI two-source energy balance model, developed by the U.S. Department of Agriculture’s Agricultural Research Service. Datasets may be downloaded at 375-m resolution and subsequently disaggregated to 30-m resolution.</p>
@@ -53,6 +56,10 @@ export default {
   margin-bottom: 30px;
 }
 
+.block-closed {
+  margin-bottom: 0px;
+}
+
 .margin-less {
   margin-top: 0px;
 }
@@ -60,7 +67,8 @@ export default {
 .p-header{
   font-weight: bold;
   margin-bottom: 0.5em;
-  color: #05485A;
+  color: #05485a;
+  font-weight: 700;
 }
 
 .inline-icon {

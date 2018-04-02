@@ -41,11 +41,11 @@ export default {
 
 <style lang="scss">
 @import "~bulma/sass/utilities/initial-variables";
-$primary: #05485A;
+$primary: #0e485a;
 @import "~bulma";
 
 body {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: Futura-pt,Futura PT,Trebuchet MS,Arial,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

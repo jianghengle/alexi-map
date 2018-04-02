@@ -3,7 +3,7 @@
     <nav class="navbar is-transparent header-bar">
       <div class="navbar-brand">
         <a class="navbar-item is-primary university-name" href="https://www.unl.edu/">
-          UNIVERSITY OF NEBRASKA-LINCOLN
+          UNIVERSITY OF NEBRASKA
         </a>
       </div>
       <div class="navbar-menu is-active">
@@ -99,58 +99,59 @@ export default {
 
 
 .header-bar {
-  background-color: #05485A;
+  background-color: #0e485a;
   color: white;
-  min-height: 40px;
-  height: 40px;
+  min-height: 41px;
+  height: 41px;
 
   .university-name {
     color: white;
     height: 40px;
-    font-family: "Arial Black", Gadget, sans-serif;
-    font-size: 12px;
-    margin-left: 80px;
+    font-size: 12pt;
+    font-weight: 600;
+    letter-spacing: .05em;
+    margin-left: 40px;
   }
 
   .bar-item {
     color: white;
-    font-size: 14px;
+    font-size: 12pt;
+    font-weight: 600;
   }
 }
 
 .nav-icon {
   position: relative;
-  top: 4px;
+  top: 3px;
   right: 5px;
 }
 
 .menu-bar {
-  height: 80px;
+  height: 117px;
 
   .app-name {
-    font-size: 28px;
+    font-size: 32px;
     margin: auto;
-    color: black;
+    color: #0e485a;
     font-family: Impact, Charcoal, sans-serif;
-    margin-left: 30px;
 
     .app-logo {
-      max-height: 60px;
-      height: 60px;
-      width: 55px;
+      max-height: 70px;
+      height: 70px;
+      width: 65px;
     }
   }
 
   .menu-item {
-    color: #05485A;
-    font-size: 16px;
+    color: #0e485a;
+    font-family: futura-pt-condensed,Futura PT Cond,futura-lt-condensed,sans-serif;
+    font-size: 18px;
     font-weight: bold;
-    font-family: Futura,Trebuchet MS,Arial,sans-serif;
   }
 }
 
 .color-seperator{
-  height: 3px;
-  background: linear-gradient(to right, #9f9a67, #3fb5bd);
+  height: 5px;
+  background: linear-gradient(90deg,#b19844 0,#97a05c 33%,#6fac7f 64%,#17c7d0)
 }
 </style>
