@@ -1,4 +1,4 @@
 # alexi-map
 
-> A Vue.js project [Live demo](http://dmac.unl.edu:8080/).
+> A Vue.js project [Live demo](https://glodet.nebraska.edu/).
 
