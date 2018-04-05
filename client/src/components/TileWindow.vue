@@ -3,19 +3,32 @@
     <div class="box images-box" v-if="ready">
       <div class="columns image-options">
         <div class="column">
-          <span class="image-input">
-            <span class="select map-select">
-              <select v-model="imageOption">
-                <option>Grids + Selection</option>
-                <option>Grids</option>
-                <option>Selection</option>
-                <option>None</option>
-              </select>
-            </span>
-            &nbsp;
-            <label class="image-input-label">Tile Size</label>
-            <input class="input image-input-input" type="number" step="10" v-model.number="tileSize">
-          </span>
+          <div class="columns">
+            <div class="column">
+              <div class="select">
+                <select v-model="imageOption">
+                  <option>Grids + Selection</option>
+                  <option>Grids</option>
+                  <option>Selection</option>
+                  <option>None</option>
+                </select>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal tile-size-label-div">
+                  <label class="label tile-size-label">Tile Size</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <div class="control">
+                      <input class="input tile-size-input" type="number" step="10" v-model.number="tileSize">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="column">
           <a class="button" :disabled="!preDate" @click="selectPreDate">
@@ -418,17 +431,17 @@ export default {
   .image-options {
     text-align: center;
 
-    .image-input {
+    .tile-size-label-div {
+      margin-right: 5px;
 
-      .image-input-label {
-        line-height: 38px;
+      .tile-size-label {
+        font-weight: normal;
+        width: 61px;
       }
+    }
 
-      .image-input-input {
-        width: 80px;
-        display: inline-block;
-        margin-top: 2px;
-      }
+    .tile-size-input {
+      width: 70px;
     }
 
     .delete-button {

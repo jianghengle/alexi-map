@@ -105,22 +105,33 @@
       </gmap-map>
     </div>
     <div class="map-options columns">
-      <div class="column map-options-column">
-        <span v-if="token && selectionBounds">
-          <span class="select map-select">
-            <select v-model="mapOption">
-              <option>All Grids + Selection</option>
-              <option>Available Grids + Selection</option>
-              <option>Selection</option>
-              <option>None</option>
-            </select>
-          </span>
-          &nbsp;
-          <label class="map-option">
-            Opacity
-          </label>
-          <input class="input map-option-input opacity-input" type="number" step="0.1" v-model.number="tileOpacity">
-        </span>
+      <div class="column">
+        <div v-if="token && selectionBounds" class="columns">
+          <div class="column">
+            <div class="select">
+              <select v-model="mapOption">
+                <option>All Grids + Selection</option>
+                <option>Available Grids + Selection</option>
+                <option>Selection</option>
+                <option>None</option>
+              </select>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field is-horizontal">
+              <div class="field-label is-normal opacity-label-div">
+                <label class="label opacity-label">Opacity</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <input class="input opacity-input" type="number" step="0.1" v-model.number="tileOpacity">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="column">
         <span class="field" v-if="selectionBounds">
@@ -715,8 +726,12 @@ export default {
   margin-top: -6px;
 }
 
-.map-select {
-  margin-top: -6px;
+.opacity-label-div {
+  margin-right: 5px;
+
+  .opacity-label {
+    font-weight: normal;
+  }
 }
 
 .opacity-input {
