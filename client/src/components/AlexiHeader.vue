@@ -37,8 +37,8 @@
     </div>
 
     <nav class="navbar">
-      <div class="navbar-brand app-name">
-        <router-link class="navbar-item" :to="'/'">
+      <div class="navbar-brand">
+        <router-link class="navbar-item app-name" :to="'/'">
           <img src="static/logo.png" class="app-logo">&nbsp;
           <span class="app-main-name">GloDET</span>
           <span class="app-sub-name">Global Daily Evapo-Transpiration</span>
@@ -179,6 +179,8 @@ export default {
 }
 
 .app-name {
+  width: 300px;
+
   .app-logo {
     max-height: 70px;
     height: 70px;
@@ -200,6 +202,7 @@ export default {
     position: relative;
     top: 18px;
     left: -126px;
+    white-space: nowrap;
   }
 }
 
