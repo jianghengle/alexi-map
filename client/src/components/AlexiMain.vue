@@ -28,25 +28,25 @@
           </span>
         </a>
       </div>
-      <div class="column dropdown-column">
-        <nav v-if="token" class="navbar is-transparent" role="navigation" aria-label="dropdown navigation">
-          <div class="navbar-item has-dropdown is-hoverable dropdown-center">
-            <a class="navbar-link">
-              Settings
-            </a>
-            <div class="navbar-dropdown is-boxed">
-              <a class="navbar-item" v-for="(s, i) in userSettings"
+      <div class="column dropdown-column dropdown-center">
+        <div v-if="token" class="dropdown is-hoverable is-right">
+          <div class="dropdown-trigger">
+            <a class="dropdown-name">Settings</a>
+          </div>
+          <div class="dropdown-menu" role="menu">
+            <div class="dropdown-content settings-dropdown-content">
+              <a class="dropdown-item" v-for="(s, i) in userSettings"
                 @click="loadSetting(s)">
                 {{s.name}}&nbsp;
                 <span v-if="s.isDefault">(default)</span>
               </a>
-              <hr class="navbar-divider">
-              <a class="navbar-item" @click="openSaveSettingModal">
+              <hr class="dropdown-divider">
+              <a class="dropdown-item" @click="openSaveSettingModal">
                 Save
               </a>
             </div>
           </div>
-        </nav>
+        </div>
       </div>
     </div>
     <div class="map-window" v-if="ready">
@@ -153,22 +153,22 @@
           </span>
         </span>
       </div>
-      <div class="column dropdown-column">
-        <nav v-if="token" class="navbar is-transparent" role="navigation" aria-label="dropdown navigation">
-          <div class="navbar-item has-dropdown is-hoverable dropdown-center">
-            <a class="navbar-link">
-              Selection
-            </a>
-            <div class="navbar-dropdown is-boxed">
-              <a class="navbar-item"  @click="newSelection">
+      <div class="column dropdown-column dropdown-top">
+        <div v-if="token" class="dropdown is-hoverable">
+          <div class="dropdown-trigger">
+            <a class="dropdown-name">Selection</a>
+          </div>
+          <div class="dropdown-menu" role="menu">
+            <div class="dropdown-content selection-dropdown-content">
+              <a class="dropdown-item"  @click="newSelection">
                 New
               </a>
-              <a class="navbar-item" @click="clearSelection">
+              <a class="dropdown-item" @click="clearSelection">
                 Clear
               </a>
             </div>
           </div>
-        </nav>
+        </div>
       </div>
     </div>
     <div class="alexi-window">
@@ -770,8 +770,25 @@ export default {
   margin: auto;
 }
 
+.dropdown-top {
+  margin-top: 15px;
+}
+
+.dropdown-name {
+  color: #0e485a;
+}
+
+.settings-dropdown-content {
+  text-align: center;
+}
+
+.selection-dropdown-content {
+  width: 100px;
+  text-align: left;
+}
+
 .map-window {
-  margin-top: -10px;
+  margin-top: -5px;
   margin-bottom: 0px;
   margin-left: -20px;
   margin-right: -20px;

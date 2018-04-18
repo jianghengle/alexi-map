@@ -42,6 +42,8 @@ export default {
 <style lang="scss">
 @import "~bulma/sass/utilities/initial-variables";
 $primary: #0e485a;
+$navbar-height: 117px;
+$navbar-item-hover-color: #0e485a;
 @import "~bulma";
 
 body {
