@@ -103,7 +103,7 @@ export default {
     },
     setPage () {
       var page = parseInt(this.pageLabel)
-      if(isNaN(page) || page < 1 || !this.numPages || page > this.numPages || this.rendering){
+      if(isNaN(page) || page < 1 || !this.numPages || page > this.numPages || this.rendering || page == this.page){
         this.pageLabel = this.page + '/' + this.numPages
       }else{
         this.page = page
