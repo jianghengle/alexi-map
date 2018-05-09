@@ -15,6 +15,13 @@ class User < ApplicationRecord
       field :password
       field :password_confirmation
       field :auth_token
+      field :status, :enum do
+        enum do
+          ['Active', 'Inactive', 'Verifying']
+        end
+      end
+      field :verification_key
+
       field :first_name
       field :last_name
       field :role, :enum do

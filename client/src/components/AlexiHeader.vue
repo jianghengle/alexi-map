@@ -8,6 +8,9 @@
       </div>
 
       <div class="top-bar-right">
+        <router-link v-if="token && role=='Admin'" class="top-bar-item not-the-last" :to="'/admin'">
+          <span class="nav-icon"><icon name="users"></icon></span>Admin
+        </router-link>
 
         <div v-if="token" class="dropdown is-hoverable top-bar-dropdown">
           <div class="dropdown-trigger">
@@ -89,6 +92,9 @@ export default {
     username () {
       return this.$store.state.user.name
     },
+    role () {
+      return this.$store.state.user.role
+    },
     routePath () {
       return this.$route.path
     },
@@ -163,7 +169,11 @@ export default {
       color: white;
       font-size: 12pt;
       font-weight: 600;
-      line-height: 40px;
+      line-height: 41px;
+
+      &.not-the-last {
+        margin-right: 20px;
+      }
     }
 
     .top-bar-item:hover {

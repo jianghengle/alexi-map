@@ -64,6 +64,26 @@ module AlexiServer
         HttpAPI::UserController.delete_user_setting(env)
       end
 
+      get "/get_all_users" do |env|
+        HttpAPI::UserController.get_all_users(env)
+      end
+
+      get "/get_user/:id" do |env|
+        HttpAPI::UserController.get_user(env)
+      end
+
+      post "/send_verification/:id" do |env|
+        HttpAPI::UserController.send_verification(env)
+      end
+
+      get "/verify_user/:key" do |env|
+        HttpAPI::UserController.verify_user(env)
+      end
+
+      post "/deactivate_user/:id" do |env|
+        HttpAPI::UserController.deactivate_user(env)
+      end
+
       get "/get_days_in_year/:year" do |env|
         HttpAPI::TileController.get_days_in_year(env)
       end

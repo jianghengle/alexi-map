@@ -9,6 +9,8 @@ import AlexiAbout from '@/components/AlexiAbout'
 import AlexiDocumentation from '@/components/AlexiDocumentation'
 import AlexiPartnersNProjects from '@/components/AlexiPartnersNProjects'
 import AlexiHelp from '@/components/AlexiHelp'
+import AlexiAdmin from '@/components/AlexiAdmin'
+import AdminUser from '@/components/AdminUser'
 
 Vue.use(Router)
 
@@ -58,6 +60,16 @@ export default new Router({
       path: '/help',
       name: 'AlexiHelp',
       component: AlexiHelp
+    },
+    {
+      path: '/admin',
+      name: 'AlexiAdmin',
+      component: AlexiAdmin
+    },
+    {
+      path: '/admin_user/:userId',
+      name: 'AdminUser',
+      component: AdminUser
     }
   ]
 })

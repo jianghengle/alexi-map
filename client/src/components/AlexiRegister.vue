@@ -183,6 +183,11 @@
         {{error}}
       </div>
 
+      <div v-if="success" class="notification is-success login-text">
+        <button class="delete" @click="success=false"></button>
+        You have successfully registered your account! The Daugherty Water for Food Global Institute will review your registration information and respond to your request within 24 hours.
+      </div>
+
       <div class="field is-grouped">
         <div class="control">
           <button class="button is-primary" :class="{'is-loading': waiting}" :disabled="!canSubmit" @click="register">Submit</button>
@@ -216,6 +221,7 @@ export default {
   data () {
     return {
       error: '',
+      success: false,
       waiting: false,
       email: '',
       password: '',
@@ -298,16 +304,17 @@ export default {
         subscribeNDMC: this.subscribeNDMC
       }
       this.$http.post(xHTTPx + '/register', message).then(response => {
-        var token = response.body.token
-        var name = response.body.name
-        Vue.http.headers.common['Authorization'] = token
-        this.$store.commit('user/setToken', token)
-        this.$store.commit('user/setName', name)
-        this.$store.commit('user/setEmail', this.email)
+        var ok = response.body.ok
+        if(ok){
+          this.success = true
+          this.error = ''
+        }else{
+          this.success = false
+          this.error = 'Failed to register user: ' + JSON.stringify(response.body)
+        }
         this.waiting = false
-        this.$store.commit('tiles/setSetting', null)
-        this.$router.push('/')
       }, response => {
+        this.success = false
         this.error = 'Failed to register user: ' + JSON.stringify(response.body)
         this.waiting = false
       })

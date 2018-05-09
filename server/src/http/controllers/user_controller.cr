@@ -14,7 +14,7 @@ module AlexiServer
           encrypted_password = Crypto::Bcrypt::Password.create(password)
           raise "failed to encrypted password" if encrypted_password.nil?
           new_user.encrypted_password = encrypted_password.to_s
-
+          new_user.status = "Inactive"
           new_user.first_name = get_param!(ctx, "firstName")
           new_user.last_name = get_param!(ctx, "lastName")
           new_user.country = get_param!(ctx, "country")
@@ -30,10 +30,7 @@ module AlexiServer
           subscribe_ndmc = get_param!(ctx, "subscribeNDMC")
 
           user = User.create_user(new_user, subscribe_wfi, subscribe_ndmc)
-          token = user.auth_token.to_s
-          email = user.email.to_s
-          name = user.first_name.to_s
-          {token: token, email: email, name: name}.to_json
+          {ok: true}.to_json
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")
         rescue e : Exception
@@ -47,10 +44,12 @@ module AlexiServer
           password = get_param!(ctx, "password")
 
           user = User.get_user_by_password!(email, password)
+          raise "User is not active!" if user.status.to_s != "Active"
           token = user.auth_token.to_s
           email = user.email.to_s
           name = user.first_name.to_s
-          {token: token, email: email, name: name}.to_json
+          role = user.role.to_s
+          {token: token, email: email, name: name, role: role}.to_json
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")
         rescue e : Exception
@@ -145,6 +144,75 @@ module AlexiServer
           user = get_user!(ctx)
           id = get_param!(ctx, "id")
           Setting.delete_setting(user, id)
+          {ok: true}.to_json
+        rescue ex : InsufficientParameters
+          error(ctx, "Not all required parameters were present")
+        rescue e : Exception
+          error(ctx, e.message.to_s)
+        end
+      end
+
+      def get_all_users(ctx)
+        begin
+          user = get_user!(ctx)
+          raise "Permission denied!" unless user.role.to_s == "Admin"
+          User.get_all_users_json
+        rescue ex : InsufficientParameters
+          error(ctx, "Not all required parameters were present")
+        rescue e : Exception
+          error(ctx, e.message.to_s)
+        end
+      end
+
+      def get_user(ctx)
+        begin
+          user = get_user!(ctx)
+          raise "Permission denied!" unless user.role.to_s == "Admin"
+          id = get_param!(ctx, "id")
+          User.get_user_json(id)
+        rescue ex : InsufficientParameters
+          error(ctx, "Not all required parameters were present")
+        rescue e : Exception
+          error(ctx, e.message.to_s)
+        end
+      end
+
+      def send_verification(ctx)
+        begin
+          user = get_user!(ctx)
+          raise "Permission denied!" unless user.role.to_s == "Admin"
+          id = get_param!(ctx, "id")
+          User.send_verification(id)
+          {ok: true}.to_json
+        rescue ex : InsufficientParameters
+          error(ctx, "Not all required parameters were present")
+        rescue e : Exception
+          error(ctx, e.message.to_s)
+        end
+      end
+
+      def verify_user(ctx)
+        begin
+          key = get_param!(ctx, "key")
+          raise "No such key" if key == ""
+          User.verify_user(key)
+          ctx.response.content_type = "text/html"
+          server_url = "http://localhost:8080"
+          server_url = ENV["SERVER_URL"] + "/index.html" if ENV.has_key?("SERVER_URL")
+          "<html><body><p>Your account has been activated. You can go ahead <a href=\"#{server_url}/\#/login\">login</a> now.</p></body></html>"
+        rescue ex : InsufficientParameters
+          error(ctx, "Not all required parameters were present")
+        rescue e : Exception
+          error(ctx, e.message.to_s)
+        end
+      end
+
+      def deactivate_user(ctx)
+        begin
+          user = get_user!(ctx)
+          raise "Permission denied!" unless user.role.to_s == "Admin"
+          id = get_param!(ctx, "id")
+          User.deactivate_user(id)
           {ok: true}.to_json
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")

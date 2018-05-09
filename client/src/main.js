@@ -24,6 +24,10 @@ import 'vue-awesome/icons/home'
 import 'vue-awesome/icons/info'
 import 'vue-awesome/icons/book'
 import 'vue-awesome/icons/cubes'
+import 'vue-awesome/icons/users'
+import 'vue-awesome/icons/sort-asc'
+import 'vue-awesome/icons/sort-desc'
+import 'vue-awesome/icons/chevron-circle-left'
 import Icon from 'vue-awesome/components/Icon'
 Vue.component('icon', Icon)
 

@@ -4,6 +4,8 @@ module AlexiServer
       schema "users" do
         field :email, String
         field :encrypted_password, String
+        field :status, String
+        field :verification_key, String
         field :first_name, String
         field :last_name, String
         field :auth_token, String
@@ -27,6 +29,8 @@ module AlexiServer
           str << "\"firstName\":" << @first_name.to_json << ","
           str << "\"lastName\":" << @last_name.to_json << ","
           str << "\"role\":" << @role.to_json << ","
+          str << "\"status\":" << @status.to_json << ","
+          str << "\"verificationKey\":" << @verification_key.to_json << ","
           str << "\"country\":" << @country.to_json << ","
           str << "\"state\":" << @state.to_json << ","
           str << "\"city\":" << @city.to_json << ","
@@ -92,7 +96,7 @@ module AlexiServer
         return unless File.directory?(send_email_dir)
         send_email_script = send_email_dir + "/sendemail.py"
         return unless File.file?(send_email_script)
-        input_text = admins_json + "\n" + new_user_json
+        input_text = admins_json + "\n\"New GloDET User Registered\"\n" + new_user_json.to_json
         File.write(send_email_dir + "/emailinput.txt", input_text)
         command = "python \"#{send_email_script}\""
         puts command
@@ -111,6 +115,91 @@ module AlexiServer
         encrypted_password = Crypto::Bcrypt::Password.create(new_password)
         raise "failed to encrypted password" if encrypted_password.nil?
         user.encrypted_password = encrypted_password.to_s
+        changeset = Repo.update(user)
+        raise changeset.errors.to_s unless changeset.valid?
+      end
+
+      def self.get_all_users_json
+        users = Repo.all(User)
+        return "[]" if users.nil?
+        users = users.as(Array)
+        arr = users.map do |u|
+          String.build do |str|
+            str << "{"
+            str << "\"id\":" << u.id << ","
+            str << "\"email\":" << u.email.to_json << ","
+            str << "\"firstName\":" << u.first_name.to_json << ","
+            str << "\"lastName\":" << u.last_name.to_json << ","
+            str << "\"registeredAt\":" << u.created_at.as(Time).epoch << ","
+            str << "\"status\":" << u.status.to_json
+            str << "}"
+          end
+        end
+        "[#{arr.join(",")}]"
+      end
+
+      def self.get_user_json(id)
+        user = Repo.get(User, id)
+        return "null" if user.nil?
+        user = user.as(User)
+        user.to_json
+      end
+
+      def self.send_verification(id)
+        user = Repo.get(User, id)
+        raise "Cannot find the user" if user.nil?
+        user = user.as(User)
+        raise "User is already active" if user.status.to_s == "Active"
+        user.status = "Verifying"
+        if (user.verification_key.nil? || user.verification_key.to_s == "")
+          user.verification_key = Random::Secure.hex.to_s
+        end
+
+        changeset = Repo.update(user)
+        raise changeset.errors.to_s unless changeset.valid?
+        User.send_verification_email(user)
+      end
+
+      def self.send_verification_email(user)
+        return unless ENV.has_key?("SEND_EMAIL_DIR")
+        send_email_dir = ENV["SEND_EMAIL_DIR"]
+        return unless File.directory?(send_email_dir)
+        send_email_script = send_email_dir + "/sendemail.py"
+        return unless File.file?(send_email_script)
+
+        address = "[\"#{user.email}\"]"
+        subject = "Activate Your GloDET Account"
+        text = "Hi there,\n\nThanks for registering GloDET. Please use the following link:\n"
+        server_url = "http://localhost:3000"
+        server_url = ENV["SERVER_URL"] if ENV.has_key?("SERVER_URL")
+        text = text + server_url + "/verify_user/" + user.verification_key.to_s + "\n"
+        text = text + "to activate your account.\n\nBest,\nGloDET Support"
+        input_text = address + "\n" + subject.to_json + "\n" + text.to_json
+        File.write(send_email_dir + "/emailinput.txt", input_text)
+        command = "python \"#{send_email_script}\""
+        puts command
+        io = IO::Memory.new
+        Process.run(command, shell: true, output: io)
+        puts io.to_s
+      end
+
+      def self.verify_user(key)
+        user = Repo.get_by(User, verification_key: key)
+        raise "Cannot find user" if user.nil?
+        user = user.as(User)
+        user.status = "Active"
+        changeset = Repo.update(user)
+        raise changeset.errors.to_s unless changeset.valid?
+      end
+
+      def self.deactivate_user(id)
+        user = Repo.get(User, id)
+        raise "Cannot find the user" if user.nil?
+        user = user.as(User)
+        raise "User is admin" if user.role.to_s == "Admin"
+        raise "User is not active" unless user.status.to_s == "Active"
+        user.status = "Inactive"
+        user.verification_key = ""
         changeset = Repo.update(user)
         raise changeset.errors.to_s unless changeset.valid?
       end
