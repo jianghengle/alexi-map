@@ -14,13 +14,13 @@ module AlexiServer
       def self.get_years_range
         years = [] of Int32
         raise "Wrong root setup" unless File.directory? @@root
-        Dir.each_entry @@root do |yyyy|
+        Dir.each @@root do |yyyy|
           year = yyyy.to_i?
           next unless year
           next if ((years.size == 2) && (year >= years[0]) && (year <= years[1]))
           has_day = false
           path = File.join(@@root, yyyy)
-          Dir.each_entry path do |ddd|
+          Dir.each path do |ddd|
             day = ddd.to_i?
             next if day.nil?
             has_day = true
@@ -42,7 +42,7 @@ module AlexiServer
         days = [] of Int32
         path = File.join(@@root, yyyy)
         return days unless File.directory? path
-        Dir.each_entry path do |name|
+        Dir.each path do |name|
           day = name.to_i?
           days << day if day
         end
@@ -61,7 +61,7 @@ module AlexiServer
         return tiles unless File.directory? path
         prefix = "FINAL_EDAY_#{yyyy}#{ddd}_T"
         suffix = ".tif"
-        Dir.each_entry path do |name|
+        Dir.each path do |name|
           next unless (name.starts_with?(prefix) && name.ends_with?(suffix))
           tile = name[(prefix.size)...(-suffix.size)].to_i?
           tiles << tile if tile

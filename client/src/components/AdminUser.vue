@@ -83,7 +83,7 @@
           </div>
         </div>
 
-        <div class="field is-horizontal" v-if="user.statue != 'Active' && user.verificationKey">
+        <div class="field is-horizontal" v-if="user.status != 'Active' && user.verificationKey">
           <div class="field-label is-normal">
             <label class="label">Verification Link</label>
           </div>
