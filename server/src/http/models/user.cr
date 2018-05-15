@@ -169,12 +169,19 @@ module AlexiServer
 
         address = "[\"#{user.email}\"]"
         subject = "Activate Your GloDET Account"
+
         text = "Hi there,\n\nThanks for registering GloDET. Please use the following link:\n"
         server_url = "http://localhost:3000"
         server_url = ENV["SERVER_URL"] if ENV.has_key?("SERVER_URL")
-        text = text + server_url + "/verify_user/" + user.verification_key.to_s + "\n"
+        activation_url = server_url + "/verify_user/" + user.verification_key.to_s
+        text = text + activation_url + "\n"
         text = text + "to activate your account.\n\nBest,\nGloDET Support"
-        input_text = address + "\n" + subject.to_json + "\n" + text.to_json
+
+        html = "<html><body><p>Hi there,</p><p>Thanks for registering GloDET. Please use the following link:</p>"
+        html = html + "<p><a href=\"#{activation_url}\">#{activation_url}</a></p>"
+        html = html + "<p>to activate your account.</p><p>Best,</p><p>GloDET Support</p></body></html>"
+
+        input_text = address + "\n" + subject.to_json + "\n" + text.to_json + "\n" + html.to_json
         File.write(send_email_dir + "/emailinput.txt", input_text)
         command = "python \"#{send_email_script}\""
         puts command
