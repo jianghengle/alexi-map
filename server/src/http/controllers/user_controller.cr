@@ -197,9 +197,9 @@ module AlexiServer
           raise "No such key" if key == ""
           User.verify_user(key)
           ctx.response.content_type = "text/html"
-          server_url = "http://localhost:8080"
+          server_url = "http://localhost:8080/"
           server_url = ENV["SERVER_URL"] + "/index.html" if ENV.has_key?("SERVER_URL")
-          "<html><body><p>Your account has been activated. You can go ahead <a href=\"#{server_url}/\#/login\">login</a> now.</p></body></html>"
+          "<html><body><p>Your account has been activated. You can go ahead <a href=\"#{server_url}\#/login\">login</a> now.</p></body></html>"
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")
         rescue e : Exception
