@@ -704,7 +704,10 @@ export default {
 <style lang="scss" scoped>
 
 .main-window {
-  padding: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 .introduction {

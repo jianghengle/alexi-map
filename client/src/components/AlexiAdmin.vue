@@ -81,7 +81,7 @@ export default {
       error: '',
       waiting: false,
       users: [],
-      sortOption: null
+      sortOption: {field: 'status', reverse: false}
     }
   },
   methods: {
@@ -93,7 +93,7 @@ export default {
           var utcSeconds = u.registeredAt
           var d = new Date(0)
           d.setUTCSeconds(utcSeconds)
-          u.registered = DateForm(d)
+          u.registered = DateForm(d, 'mmm dd yyyy h:MM TT')
           return u
         })
         this.sortUsers()

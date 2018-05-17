@@ -104,6 +104,30 @@ module AlexiServer
         HttpAPI::DownloadController.download_file(env)
       end
 
+      get "/get_questions" do |env|
+        HttpAPI::QAController.get_questions(env)
+      end
+
+      post "/add_question" do |env|
+        HttpAPI::QAController.add_question(env)
+      end
+
+      post "/delete_question" do |env|
+        HttpAPI::QAController.delete_question(env)
+      end
+
+      post "/add_answer" do |env|
+        HttpAPI::QAController.add_answer(env)
+      end
+
+      post "/update_answer" do |env|
+        HttpAPI::QAController.update_answer(env)
+      end
+
+      post "/delete_answer" do |env|
+        HttpAPI::QAController.delete_answer(env)
+      end
+
       port = 3000
       port = ENV["ALEXI_PORT"].to_i if ENV.has_key?("ALEXI_PORT")
       Kemal.run port

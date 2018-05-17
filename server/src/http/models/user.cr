@@ -210,6 +210,23 @@ module AlexiServer
         changeset = Repo.update(user)
         raise changeset.errors.to_s unless changeset.valid?
       end
+
+      def self.get_users_by_ids_json(ids)
+        query = Query.where(:id, ids)
+        users = Repo.all(User, query)
+        return "[]" if users.nil?
+        users = users.as(Array)
+        arr = users.map do |u|
+          String.build do |str|
+            str << "{"
+            str << "\"id\":" << u.id << ","
+            name = u.first_name.to_s + "." + u.last_name.to_s
+            str << "\"name\":" << name.to_json
+            str << "}"
+          end
+        end
+        "[#{arr.join(",")}]"
+      end
     end
   end
 end

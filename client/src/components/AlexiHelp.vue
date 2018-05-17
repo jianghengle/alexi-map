@@ -12,7 +12,9 @@
         <p>A: Entering your registration information and clicking “Submit” does not immediately grant you access to the GloDET database. The Daugherty Water for Food Global Institute will review your registration information and respond to your request within 24 hours. Once your registration is approved, an email will be sent to email address you used to register that includes a link to verify your email address and sign in.  Once you are signed in, you may view and download high-resolution datasets.</p>
 
         <h4 class="p-header">Ask the Community</h4>
-        <p>To be coming ...</p>
+        <ask-community></ask-community>
+
+        <br/>
 
         <h4 class="p-header">Contact</h4>
         <p>To reach the GloDET technical staff directly, please complete the form below clearly stating your query. We will be in touch as soon as possible.</p>
@@ -24,9 +26,13 @@
 
 <script>
 import Vue from 'vue'
+import AskCommunity from './AskCommunity'
 
 export default {
   name: 'alexi-help',
+  components: {
+    AskCommunity
+  }
 }
 </script>
 

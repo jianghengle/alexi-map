@@ -57,6 +57,11 @@ module AlexiServer
         return nil unless token
         User.get_user_by_token(token)
       end
+
+      private def to_json_array(arr)
+        ss = arr.map { |o| o.to_json }
+        "[#{ss.join(",")}]"
+      end
     end
   end
 end

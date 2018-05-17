@@ -28,6 +28,8 @@ import 'vue-awesome/icons/users'
 import 'vue-awesome/icons/sort-asc'
 import 'vue-awesome/icons/sort-desc'
 import 'vue-awesome/icons/chevron-circle-left'
+import 'vue-awesome/icons/comments'
+import 'vue-awesome/icons/search'
 import Icon from 'vue-awesome/components/Icon'
 Vue.component('icon', Icon)
 

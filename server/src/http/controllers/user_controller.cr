@@ -49,7 +49,8 @@ module AlexiServer
           email = user.email.to_s
           name = user.first_name.to_s
           role = user.role.to_s
-          {token: token, email: email, name: name, role: role}.to_json
+          id = user.id.to_s
+          {token: token, email: email, name: name, role: role, id: id}.to_json
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")
         rescue e : Exception
