@@ -30,6 +30,7 @@ import 'vue-awesome/icons/sort-desc'
 import 'vue-awesome/icons/chevron-circle-left'
 import 'vue-awesome/icons/comments'
 import 'vue-awesome/icons/search'
+import 'vue-awesome/icons/pencil-square'
 import Icon from 'vue-awesome/components/Icon'
 Vue.component('icon', Icon)
 

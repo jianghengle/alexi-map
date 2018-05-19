@@ -7,23 +7,41 @@
       <button class="delete" @click="error=''"></button>
       {{error}}
     </div>
-    <div class="field is-grouped">
+    <div class="field">
       <p class="control has-icons-left is-expanded">
-        <input class="input" type="text" placeholder="Search all content">
+        <input class="input" type="text" placeholder="Search all content"
+          @blur="filterQuestions" @keyup.enter="filterQuestions" v-model="questionFilter">
         <span class="icon is-small is-left">
           <icon name="search"></icon>
         </span>
       </p>
-      <p class="control">
-        <a class="button is-info" @click="askQuestionModal.opened = true">
+    </div>
+    <div class="columns control-row">
+      <div class="column pages-column">
+        <nav class="pagination" role="navigation" aria-label="pagination">
+          <ul class="pagination-list page-numbers">
+            <li>
+              <a class="pagination-link is-current page-number" aria-label="Page 1" aria-current="page">1</a>
+            </li>
+            <li>
+              <a class="pagination-link page-number" aria-label="Goto page 2">2</a>
+            </li>
+            <li>
+              <a class="pagination-link page-number" aria-label="Goto page 3">3</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="column button-column">
+        <a class="button is-info is-pulled-right" @click="askQuestionModal.opened = true">
           Ask New Question
         </a>
-      </p>
+      </div>
     </div>
 
-    <div v-if="questions.length">
-      <div v-for="q in questions" :key="'q-' + q.id" class="question-container">
-        <a v-if="role == 'Admin'" class="button delete delete-button" @click="deleteQuestion(q)"></a>
+    <div v-if="filteredQuestions.length">
+      <div v-for="q in filteredQuestions" :key="'q-' + q.id" class="question-container">
+        <a v-if="role == 'Admin'" class="button delete delete-question-button" @click="deleteQuestion(q)"></a>
 
         <div class="columns question-header" @click="q.open = !q.open">
           <div class="column is-9">
@@ -47,12 +65,27 @@
           <div v-for="a in q.answers" :key="'a-' + a.id">
             <div class="columns answer-container">
               <div class="column is-10 answer-content-container">
-                <a v-if="a.userId == userId" class="button delete delete-button" @click="deleteAnswer(q, a)"></a>
-                <pre class="answer-content">{{a.content}}</pre>
+                <a v-if="a.userId == userId && !a.editing" class="button delete delete-answer-button" @click="deleteAnswer(q, a)"></a>
+                <a v-if="a.userId == userId && !a.editing" class="edit-button" @click="editAnswer(a)">
+                  <icon name="pencil-square" scale="1.3"></icon>
+                </a>
+                <pre v-if="!a.editing" class="answer-content" :id="'a-pre-' + a.id">{{a.content}}</pre>
+                <textarea v-if="a.editing" class="textarea edit-content" placeholder="Your answer here"
+                  :style="{'height': a.height + 'px'}"
+                  v-model="a.editContent">
+                </textarea>
               </div>
               <div class="column is-2">
                 <div>{{a.user ? a.user.name : 'Anonymous'}}</div>
                 <div class="gray-font">{{a.createdAt}}</div>
+                <div v-if="a.editing">
+                  <a class="button is-danger side-button" :class="{'is-loading': a.waiting}"
+                    :disabled="a.content == a.editContent"
+                    @click="updateAnswer(a)">
+                    Update
+                  </a>
+                </div>
+                <div v-if="a.editing"><a class="button side-button" @click="a.editing = false">Cancel</a></div>
               </div>
             </div>
           </div>
@@ -61,7 +94,7 @@
             <div class="column is-10">
               <div class="field">
                 <div class="control new-reply-textarea">
-                  <textarea class="textarea" placeholder="Textarea" v-model="q.newReply"></textarea>
+                  <textarea class="textarea" placeholder="Your reply here" v-model="q.newReply"></textarea>
                 </div>
               </div>
             </div>
@@ -89,7 +122,7 @@
         </div>
       </div>
     </div>
-    <div v-else>No question posted Yet...</div>
+    <div v-else>No question on this Yet...</div>
 
     <ask-question-modal
       :opened="askQuestionModal.opened"
@@ -132,6 +165,8 @@ export default {
         button: '',
         context: null
       },
+      questionFilter: '',
+      filteredQuestions: []
     }
   },
   computed: {
@@ -154,6 +189,48 @@ export default {
     }
   },
   methods: {
+    filterQuestions () {
+      if(!this.questionFilter){
+        this.filteredQuestions = this.questions.slice()
+        return
+      }
+      var questionFilter = this.questionFilter
+      this.filteredQuestions = this.questions.filter(function(q){
+        if(q.subject.includes(questionFilter)){
+          return true
+        }
+        if(q.content.includes(questionFilter)){
+          return true
+        }
+        for(var i=0;i<q.answers.length;i++){
+          var a = q.answers[i]
+          if(a.content.includes(questionFilter)){
+            return true
+          }
+        }
+        return false
+      })
+    },
+    editAnswer (a) {
+      a.height = document.getElementById('a-pre-' + a.id).offsetHeight
+      a.editing = true
+    },
+    updateAnswer (a) {
+      if(a.content == a.editContent)
+        return
+
+      a.waiting = true
+      var message = {answerId: a.id, content: a.editContent}
+      this.$http.post(xHTTPx + '/update_answer', message).then(response => {
+        if(response.body.ok){
+          a.content = a.editContent
+          a.editing = false
+        }
+        a.waiting = false
+      }, response => {
+        a.waiting= false
+      })
+    },
     deleteAnswer (q, a) {
       var title = 'Delete Answer'
       var message = 'Are you sure to delete the answer to the question "' + q.subject + '"?'
@@ -189,6 +266,10 @@ export default {
         var a = resp.answer
         a.createdAt = this.makeTimeLabel(a.created)
         a.user = resp.user
+        a.editing = false
+        a.editContent = a.content
+        a.waiting = false
+        a.height = 0
         q.answers.push(a)
         q.replying = false
         q.newReply = ''
@@ -216,6 +297,7 @@ export default {
           }
           if(index >= 0){
             this.questions.splice(index, 1)
+            this.filterQuestions()
           }
         }
       })
@@ -231,6 +313,10 @@ export default {
           var q = questions[a.questionId]
           a.createdAt = vm.makeTimeLabel(a.created)
           a.user = users[a.userId]
+          a.editing = false
+          a.editContent = a.content
+          a.waiting = false
+          a.height = 0
           if(!q.answers) q.answers = []
           q.answers.push(a)
         })
@@ -251,7 +337,7 @@ export default {
           return b.created - a.created
         })
         this.questions = questions
-        console.log(this.questions)
+        this.filterQuestions()
         this.waiting = false
       }, (response) => {
         this.error = 'failed to get all the questions'
@@ -281,7 +367,8 @@ export default {
         q.replying = false
         q.newReply = ''
         q.waiting = false
-        this.questions.unshift(question)
+        this.questions.unshift(q)
+        this.filterQuestions()
       }
       this.askQuestionModal.opened = false
     },
@@ -307,7 +394,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.userId)
     this.getQuestions()
   }
 }
@@ -315,15 +401,55 @@ export default {
 
 <style lang="scss" scoped>
 
+.control-row {
+  margin-bottom: 0px;
+
+  .pages-column {
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    .page-numbers {
+      margin: 0px;
+      list-style-type: none;
+
+      .page-number {
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .button-column {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+
 .gray-font {
   color: gray;
   font-size: 14px;
 }
 
-.delete-button {
+.delete-question-button {
   position: absolute;
-  top: 15px;
+  top: 10px;
   right: 15px;
+}
+
+.delete-answer-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.edit-button {
+  position: absolute;
+  top: 12px;
+  right: 35px;
+  color: rgba(10, 10, 10, 0.2);
+}
+
+.edit-button:hover {
+  color: rgba(10, 10, 10, 0.3);
 }
 
 .question-container {
@@ -369,12 +495,16 @@ export default {
     .answer-container {
       .answer-content-container {
         position: relative;
+        padding-left: 40px;
 
         .answer-content {
           font-family: Futura-pt,Futura PT,Trebuchet MS,Arial,sans-serif;
           white-space: pre-line;
           border-radius: 5px;
-          margin-left: 35px;
+        }
+
+        .edit-content {
+          min-height: 140px;
         }
       }
     }
