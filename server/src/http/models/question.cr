@@ -33,9 +33,17 @@ module AlexiServer
         question.subject = subject
         question.content = content
         question.user_id = user.id unless user.nil?
-
         changeset = Repo.insert(question)
         raise changeset.errors.to_s unless changeset.valid?
+        changeset.changes.each do |change|
+          if (change.has_key?(:id))
+            id = change[:id].as(Int32)
+            question = Repo.get(Question, id)
+            raise "Cannot find the new question" if question.nil?
+            return question
+          end
+        end
+        return question
       end
 
       def self.delete_question(question_id)

@@ -34,6 +34,15 @@ module AlexiServer
 
         changeset = Repo.insert(answer)
         raise changeset.errors.to_s unless changeset.valid?
+        changeset.changes.each do |change|
+          if (change.has_key?(:id))
+            id = change[:id].as(Int32)
+            answer = Repo.get(Answer, id)
+            raise "Cannot find the new answer" if answer.nil?
+            return answer
+          end
+        end
+        return answer
       end
 
       def self.update_answer(answer_id, content, user)

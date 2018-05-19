@@ -33,8 +33,13 @@ module AlexiServer
           subject = get_param!(ctx, "subject")
           content = get_param!(ctx, "content")
           user = get_user(ctx)
-          Question.create_question(subject, content, user)
-          {ok: true}.to_json
+          question = Question.create_question(subject, content, user)
+          user_json = "null"
+          unless user.nil?
+            name = user.first_name.to_s + "." + user.last_name.to_s
+            user_json = "{\"id\": #{user.id}, \"name\": #{name.to_json}}"
+          end
+          "{\"question\": #{question.to_json}, \"user\": #{user_json}}"
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")
         rescue e : Exception
@@ -61,8 +66,10 @@ module AlexiServer
           user = get_user!(ctx)
           question_id = get_param!(ctx, "questionId").to_i
           content = get_param!(ctx, "content")
-          Answer.create_answer(question_id, content, user)
-          {ok: true}.to_json
+          answer = Answer.create_answer(question_id, content, user)
+          name = user.first_name.to_s + "." + user.last_name.to_s
+          user_json = "{\"id\": #{user.id}, \"name\": #{name.to_json}}"
+          "{\"answer\": #{answer.to_json}, \"user\": #{user_json}}"
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")
         rescue e : Exception

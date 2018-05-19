@@ -47,10 +47,11 @@ module AlexiServer
           raise "User is not active!" if user.status.to_s != "Active"
           token = user.auth_token.to_s
           email = user.email.to_s
-          name = user.first_name.to_s
+          first_name = user.first_name.to_s
+          last_name = user.last_name.to_s
           role = user.role.to_s
           id = user.id.to_s
-          {token: token, email: email, name: name, role: role, id: id}.to_json
+          {token: token, email: email, firstName: first_name, lastName: last_name, role: role, id: id}.to_json
         rescue ex : InsufficientParameters
           error(ctx, "Not all required parameters were present")
         rescue e : Exception

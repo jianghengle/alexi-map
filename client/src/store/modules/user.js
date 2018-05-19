@@ -3,8 +3,10 @@
 export const state = {
   token: localStorage.getItem('token'),
   email: localStorage.getItem('email'),
-  name: localStorage.getItem('name'),
+  firstName: localStorage.getItem('firstName'),
+  lastName: localStorage.getItem('lastName'),
   role: localStorage.getItem('role'),
+  userId: localStorage.getItem('userId'),
   sortOption: {field: 'status', reverse: false}
 }
 
@@ -18,9 +20,14 @@ export const mutations = {
     state.email = email
   },
 
-  setName (state, name) {
-    state.name = name
-    localStorage.setItem('name', name)
+  setFirstName (state, firstName) {
+    state.firstName = firstName
+    localStorage.setItem('firstName', firstName)
+  },
+
+  setLastName (state, lastName) {
+    state.lastName = lastName
+    localStorage.setItem('lastName', lastName)
   },
 
   setRole (state, role) {
@@ -28,15 +35,24 @@ export const mutations = {
     localStorage.setItem('role', role)
   },
 
+  setUserId (state, userId) {
+    state.userId = userId
+    localStorage.setItem('userId', userId)
+  },
+
   reset (state) {
     state.token = null
     state.email = null
-    state.name = null
+    state.firstName = null
+    state.lastName = null
     state.role = null
+    state.userId = null
     localStorage.removeItem('token')
     localStorage.removeItem('email')
-    localStorage.removeItem('name')
     localStorage.removeItem('role')
+    localStorage.removeItem('firstName')
+    localStorage.removeItem('lastName')
+    localStorage.removeItem('userId')
   },
 
   setSortOption (state, obj) {

@@ -90,7 +90,7 @@ export default {
       return this.$store.state.user.token
     },
     username () {
-      return this.$store.state.user.name
+      return this.$store.state.user.firstName
     },
     role () {
       return this.$store.state.user.role

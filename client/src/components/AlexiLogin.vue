@@ -76,12 +76,16 @@ export default {
       var message = {email: this.email, password: this.password}
       this.$http.post(xHTTPx + '/get_auth_token', message).then(response => {
         var token = response.body.token
-        var name = response.body.name
+        var firstName = response.body.firstName
+        var lastName = response.body.lastName
         var role = response.body.role
+        var userId = response.body.id
         Vue.http.headers.common['Authorization'] = token
         this.$store.commit('user/setToken', token)
-        this.$store.commit('user/setName', name)
+        this.$store.commit('user/setFirstName', firstName)
+        this.$store.commit('user/setLastName', lastName)
         this.$store.commit('user/setRole', role)
+        this.$store.commit('user/setUserId', userId)
         this.$store.commit('user/setEmail', this.email)
         if (this.rememberMe) {
           localStorage.setItem('token', token)

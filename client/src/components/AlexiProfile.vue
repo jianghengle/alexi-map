@@ -287,7 +287,8 @@ export default {
       this.$http.post(xHTTPx + '/update_user_profile', message).then(response => {
         this.profile = response.body
         this.applyProfile()
-        this.$store.commit('user/setName', this.firstName)
+        this.$store.commit('user/setFirstName', this.firstName)
+        this.$store.commit('user/setLastName', this.lastName)
         this.success1 = 'Profile update succeed!'
         this.error1 = ''
         this.waiting = false
