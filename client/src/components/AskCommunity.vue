@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div class="spinner-container" v-if="waiting">
       <icon name="spinner" class="icon is-medium fa-spin"></icon>
     </div>
@@ -10,37 +10,43 @@
     <div class="field">
       <p class="control has-icons-left is-expanded">
         <input class="input" type="text" placeholder="Search all content"
-          @blur="filterQuestions" @keyup.enter="filterQuestions" v-model="questionFilter">
+          @blur="searchQuestions" @keyup.enter="searchQuestions" v-model="questionFilter">
         <span class="icon is-small is-left">
           <icon name="search"></icon>
         </span>
       </p>
     </div>
-    <div class="columns control-row">
-      <div class="column pages-column">
-        <nav class="pagination" role="navigation" aria-label="pagination">
-          <ul class="pagination-list page-numbers">
-            <li>
-              <a class="pagination-link is-current page-number" aria-label="Page 1" aria-current="page">1</a>
-            </li>
-            <li>
-              <a class="pagination-link page-number" aria-label="Goto page 2">2</a>
-            </li>
-            <li>
-              <a class="pagination-link page-number" aria-label="Goto page 3">3</a>
-            </li>
-          </ul>
-        </nav>
+
+    <div class="pages-row">
+      <div class="question-count">{{filteredQuestions.length}} thread(s)</div>
+      <div class="pages" v-if="filteredQuestions.length">
+        <ul class="pagination-list page-numbers">
+          <li class="page-number">
+            <a class="pagination-link" :disabled="pageNum <= 1" @click="pageQuestions(1)">P1</a>
+          </li>
+          <li class="page-number">
+            <a class="pagination-link" :disabled="pageNum <= 1" @click="pageQuestions(pageNum - 1)"><icon name="chevron-left"></icon></a>
+          </li>
+          <li class="page-number">
+            <a class="pagination-link is-current">{{currentPage}}</a>
+          </li>
+          <li class="page-number">
+            <a class="pagination-link" :disabled="pageNum >= AllPages" @click="pageQuestions(pageNum + 1)"><icon name="chevron-right"></icon></a>
+          </li>
+          <li class="page-number">
+            <a class="pagination-link" :disabled="pageNum >= AllPages" @click="pageQuestions(AllPages)">P{{AllPages}}</a>
+          </li>
+        </ul>
       </div>
-      <div class="column button-column">
-        <a class="button is-info is-pulled-right" @click="askQuestionModal.opened = true">
+      <div class="ask-button">
+        <a class="button is-info" @click="askQuestionModal.opened = true">
           Ask New Question
         </a>
       </div>
     </div>
 
-    <div v-if="filteredQuestions.length">
-      <div v-for="q in filteredQuestions" :key="'q-' + q.id" class="question-container">
+    <div v-if="pagedQuestions.length">
+      <div v-for="q in pagedQuestions" :key="'q-' + q.id" class="question-container">
         <a v-if="role == 'Admin'" class="button delete delete-question-button" @click="deleteQuestion(q)"></a>
 
         <div class="columns question-header" @click="q.open = !q.open">
@@ -122,7 +128,6 @@
         </div>
       </div>
     </div>
-    <div v-else>No question on this Yet...</div>
 
     <ask-question-modal
       :opened="askQuestionModal.opened"
@@ -166,7 +171,10 @@ export default {
         context: null
       },
       questionFilter: '',
-      filteredQuestions: []
+      filteredQuestions: [],
+      pageSize: 5,
+      pageNum: 1,
+      pagedQuestions: []
     }
   },
   computed: {
@@ -186,9 +194,38 @@ export default {
       var firstName = this.$store.state.user.firstName
       var lastName = this.$store.state.user.lastName
       return firstName + '.' + lastName
+    },
+    currentPage () {
+      var start = (this.pageNum - 1) * this.pageSize + 1
+      var end = this.pageNum * this.pageSize
+      if(end > this.filteredQuestions.length){
+        end = this.filteredQuestions.length
+      }
+      return start + ' ~ ' + end
+    },
+    AllPages () {
+      return Math.ceil(this.filteredQuestions.length / this.pageSize)
     }
   },
   methods: {
+    pageQuestions (num) {
+      if(num){
+        if(num < 1){
+          this.pageNum = 1
+        }else if(num > this.AllPages){
+          this.pageNum = this.AllPages
+        }else{
+          this.pageNum = num
+        }
+      }
+      var start = (this.pageNum - 1) * this.pageSize
+      var end = this.pageNum * this.pageSize
+      this.pagedQuestions = this.filteredQuestions.slice(start, end)
+    },
+    searchQuestions () {
+      this.filterQuestions()
+      this.pageQuestions(1)
+    },
     filterQuestions () {
       if(!this.questionFilter){
         this.filteredQuestions = this.questions.slice()
@@ -298,6 +335,7 @@ export default {
           if(index >= 0){
             this.questions.splice(index, 1)
             this.filterQuestions()
+            this.pageQuestions()
           }
         }
       })
@@ -338,6 +376,7 @@ export default {
         })
         this.questions = questions
         this.filterQuestions()
+        this.pageQuestions()
         this.waiting = false
       }, (response) => {
         this.error = 'failed to get all the questions'
@@ -369,6 +408,7 @@ export default {
         q.waiting = false
         this.questions.unshift(q)
         this.filterQuestions()
+        this.pageQuestions(1)
       }
       this.askQuestionModal.opened = false
     },
@@ -401,26 +441,37 @@ export default {
 
 <style lang="scss" scoped>
 
-.control-row {
-  margin-bottom: 0px;
+.pages-row {
+  margin-top: -10px;
+  padding-bottom: 5px;
 
-  .pages-column {
-    padding-top: 5px;
-    padding-bottom: 5px;
+  .question-count {
+    display: inline-block;
+    color: gray;
+    font-size: 14px;
+    position: relative;
+    top: 10px;
+  }
+
+  .pages{
+    display: inline-block;
 
     .page-numbers {
-      margin: 0px;
+      margin-top: 0px;
+      margin-left: 5px;
       list-style-type: none;
 
       .page-number {
-        margin-top: 5px;
+        margin-top: 0px!important;
       }
     }
   }
 
-  .button-column {
-    padding-top: 5px;
-    padding-bottom: 5px;
+  .ask-button {
+    display: inline-block;
+    position: relative;
+    top: 4px;
+    float: right;
   }
 }
 
