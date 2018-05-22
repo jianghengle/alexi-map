@@ -15,6 +15,7 @@
         <ask-community></ask-community>
 
         <br/>
+        <br/>
 
         <h4 class="p-header" id="the-contact-box">Contact</h4>
         <p>To reach the GloDET technical staff directly, please complete the form below clearly stating your query. We will be in touch as soon as possible.</p>
