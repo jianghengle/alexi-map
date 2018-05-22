@@ -19,6 +19,11 @@
 
     <div class="pages-row">
       <div class="question-count">{{filteredQuestions.length}} thread(s)</div>
+      <div class="ask-button">
+        <a class="button is-info" @click="askQuestionModal.opened = true">
+          Ask New Question
+        </a>
+      </div>
       <div class="pages" v-if="filteredQuestions.length">
         <ul class="pagination-list page-numbers">
           <li class="page-number">
@@ -37,11 +42,6 @@
             <a class="pagination-link" :disabled="pageNum >= AllPages" @click="pageQuestions(AllPages)">P{{AllPages}}</a>
           </li>
         </ul>
-      </div>
-      <div class="ask-button">
-        <a class="button is-info" @click="askQuestionModal.opened = true">
-          Ask New Question
-        </a>
       </div>
     </div>
 
@@ -446,11 +446,16 @@ export default {
   padding-bottom: 5px;
 
   .question-count {
-    display: inline-block;
     color: gray;
     font-size: 14px;
-    position: relative;
-    top: 10px;
+    float: left;
+    padding-top: 10px;
+    padding-right: 15px;
+  }
+
+  .ask-button {
+    float: right;
+    padding-top: 3px;
   }
 
   .pages{
@@ -458,20 +463,13 @@ export default {
 
     .page-numbers {
       margin-top: 0px;
-      margin-left: 5px;
+      margin-left: 0px;
       list-style-type: none;
 
       .page-number {
         margin-top: 0px!important;
       }
     }
-  }
-
-  .ask-button {
-    display: inline-block;
-    position: relative;
-    top: 4px;
-    float: right;
   }
 }
 

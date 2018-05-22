@@ -2,7 +2,7 @@
   <div>
     <div class="top-bar">
       <div class="top-bar-left">
-        <a class="university-name" href="https://www.unl.edu/">
+        <a class="university-name is-hidden-mobile" href="https://www.unl.edu/">
           UNIVERSITY OF NEBRASKA
         </a>
       </div>
@@ -42,7 +42,7 @@
     <nav class="navbar">
       <div class="navbar-brand">
         <router-link class="navbar-item app-name" :to="'/'">
-          <img src="static/logo.png" class="app-logo">&nbsp;
+          <img src="static/logo.png" class="app-logo is-hidden-mobile">&nbsp;
           <span class="app-main-name">GloDET</span>
           <span class="app-sub-name">Global Daily Evapo-Transpiration</span>
         </router-link>
