@@ -11,6 +11,8 @@ var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
 var env = config.build.env
 
+var googleKey = process.env.GOOGLE_KEY
+
 var webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
@@ -28,7 +30,8 @@ var webpackConfig = merge(baseWebpackConfig, {
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env,
-      'xHTTPx': JSON.stringify('https://glodet.nebraska.edu')
+      'xHTTPx': JSON.stringify('https://glodet.nebraska.edu'),
+      'xGOOGLEKEYx': JSON.stringify(googleKey)
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
