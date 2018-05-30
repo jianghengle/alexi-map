@@ -102,14 +102,14 @@
       </div>
 
       <div class="field">
-        <label class="label">Employer (optional)</label>
+        <label class="label">Employer</label>
         <div class="control">
           <input class="input login-text" type="text" placeholder="Employer" v-model="employer">
         </div>
       </div>
 
       <div class="field">
-        <label class="label">Job Title (optional)</label>
+        <label class="label">Job Title</label>
         <div class="control">
           <input class="input login-text" type="text" placeholder="Job Title" v-model="title">
         </div>
@@ -277,9 +277,9 @@ export default {
     canSubmit () {
       return this.emailValid && this.passwordValid && this.passwordsMatch
         && this.firstName.length && this.lastName.length && this.city
-        && this.affiliation.length && this.purpose.length && this.hearFrom.length
+        && this.affiliation.length && this.employer.length && this.title.length
+        && this.purpose.length && this.hearFrom.length
         && this.agreeTerms
-
     }
   },
   methods: {
