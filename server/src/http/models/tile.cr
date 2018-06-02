@@ -44,7 +44,9 @@ module AlexiServer
         return days unless File.directory? path
         Dir.each path do |name|
           day = name.to_i?
-          days << day if day
+          if day
+            days << day unless Dir.empty?(path + "/" + name)
+          end
         end
         days.sort
       end
