@@ -99,7 +99,6 @@ module AlexiServer
         input_text = admins_json + "\n\"New GloDET User Registered\"\n" + new_user_json.to_json
         File.write(send_email_dir + "/emailinput.txt", input_text)
         command = "python \"#{send_email_script}\""
-        puts command
         io = IO::Memory.new
         Process.run(command, shell: true, output: io)
         puts io.to_s
@@ -184,7 +183,6 @@ module AlexiServer
         input_text = address + "\n" + subject.to_json + "\n" + text.to_json + "\n" + html.to_json
         File.write(send_email_dir + "/emailinput.txt", input_text)
         command = "python \"#{send_email_script}\""
-        puts command
         io = IO::Memory.new
         Process.run(command, shell: true, output: io)
         puts io.to_s
@@ -226,6 +224,29 @@ module AlexiServer
           end
         end
         "[#{arr.join(",")}]"
+      end
+
+      def self.contact_us(content)
+        query = Query.where(role: "Admin")
+        admins = Repo.all(User, query)
+        return if admins.nil?
+        admins = admins.as(Array)
+        return if admins.empty?
+        emails = admins.map { |a| a.email.to_s }
+        admins_json = emails.to_json
+
+        return unless ENV.has_key?("SEND_EMAIL_DIR")
+        send_email_dir = ENV["SEND_EMAIL_DIR"]
+        return unless File.directory?(send_email_dir)
+        send_email_script = send_email_dir + "/sendemail.py"
+        return unless File.file?(send_email_script)
+
+        input_text = admins_json + "\n\"Contact us from GloDET\"\n" + content.to_json
+        File.write(send_email_dir + "/emailinput.txt", input_text)
+        command = "python \"#{send_email_script}\""
+        io = IO::Memory.new
+        Process.run(command, shell: true, output: io)
+        puts io.to_s
       end
     end
   end

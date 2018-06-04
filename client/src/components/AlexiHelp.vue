@@ -19,7 +19,7 @@
 
         <h4 class="p-header" id="the-contact-box">Contact</h4>
         <p>To reach the GloDET technical staff directly, please complete the form below clearly stating your query. We will be in touch as soon as possible.</p>
-        <p>To be coming ...</p>
+        <contact-us></contact-us>
       </div>
     </div>
   </div>
@@ -28,11 +28,13 @@
 <script>
 import Vue from 'vue'
 import AskCommunity from './AskCommunity'
+import ContactUs from './ContactUs'
 
 export default {
   name: 'alexi-help',
   components: {
-    AskCommunity
+    AskCommunity,
+    ContactUs
   },
   methods: {
     scrollToElement(id){

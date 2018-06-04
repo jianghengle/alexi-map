@@ -222,6 +222,30 @@ module AlexiServer
           error(ctx, e.message.to_s)
         end
       end
+
+      def contact_us(ctx)
+        begin
+          content = get_param!(ctx, "content")
+          a = get_param!(ctx, "a").to_i
+          b = get_param!(ctx, "b").to_i
+          c = get_param!(ctx, "c").to_i
+
+          raise "failed to verify human" unless a + b == c
+          t = a - b
+          now = Time.now
+          h = (now.epoch / 3600) % 4
+          puts t
+          puts h
+          raise "failed to verify human!" unless (t == h || (t + 1) % 4 == h)
+
+          User.contact_us(content)
+          {ok: true}.to_json
+        rescue ex : InsufficientParameters
+          error(ctx, "Not all required parameters were present")
+        rescue e : Exception
+          error(ctx, e.message.to_s)
+        end
+      end
     end
   end
 end

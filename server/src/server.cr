@@ -84,6 +84,10 @@ module AlexiServer
         HttpAPI::UserController.deactivate_user(env)
       end
 
+      post "/contact_us" do |env|
+        HttpAPI::UserController.contact_us(env)
+      end
+
       get "/get_days_in_year/:year" do |env|
         HttpAPI::TileController.get_days_in_year(env)
       end

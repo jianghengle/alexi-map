@@ -521,7 +521,7 @@ export default {
   }
 
   .question-header:hover {
-    background-color: #fafafa;
+    background-color: hsl(204, 86%, 93%);
   }
 
   .question-answers-block {
