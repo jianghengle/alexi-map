@@ -7,6 +7,10 @@
         Please complete the registration information below, and click Submit.
       </div>
 
+      <div class="notification is-danger">
+        The GloDET data viewer is currently still under development.  New users who are not actively involved in the development will not be registered at this time.  For questions, please contact Lacey Bodnar, DWFI Project Manager, at <a href="mailto:lbodnar@nebraska.edu">lbodnar@nebraska.edu</a>.
+      </div>
+
       <div class="field">
         <label class="label">Email</label>
         <div class="control has-icons-left">

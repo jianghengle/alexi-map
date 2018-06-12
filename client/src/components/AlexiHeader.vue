@@ -72,6 +72,9 @@
       </div>
     </nav>
     <div class="color-seperator"></div>
+    <div class="notification is-danger">
+      NOTICE: The GloDET data viewer is currently still under development.  Any questions or comments are welcome at <a href="mailto:glodet@nebraska.edu">glodet@nebraska.edu</a>.  Thank you for visiting.
+    </div>
   </div>
 </template>
 
