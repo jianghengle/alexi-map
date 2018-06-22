@@ -106,7 +106,7 @@
     </div>
     <div class="map-options columns">
       <div class="column">
-        <div v-if="token && selectionBounds" class="columns">
+        <div v-if="selectionBounds" class="columns">
           <div class="column">
             <div class="select">
               <select v-model="mapOption">
@@ -308,7 +308,7 @@ export default {
       selectionOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', fillOpacity: 0.1, zIndex: 2},
       tileOpacity: 0.6,
       tileSize: 200,
-      mapOption: 'All Grids + Selection',
+      mapOption: 'Available Grids + Selection',
       imageOption: 'Grids + Selection',
       date: new Date(),
       tileWindows: [],
