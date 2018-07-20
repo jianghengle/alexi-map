@@ -10,7 +10,7 @@ module AlexiServer
         begin
           questions = Question.get_all_questions
           answers = Answer.get_all_answers
-          user_ids = [] of (Int32 | Int64 | Nil)
+          user_ids = [] of (Int32 | Int64 | String | Nil)
           questions.each do |q|
             user_ids << q.user_id unless q.user_id.nil?
           end
