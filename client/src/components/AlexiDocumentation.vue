@@ -22,6 +22,14 @@
           </p>
         </div>
       </div>
+      <div class="content text-content">
+        <h4 class="p-header">GloDET Quick Start Guide
+          <a href="static/GloDET Quick Start Guide.pdf" class="button is-text" download>link</a>
+        </h4>
+        <div class="pdf-container">
+          <iframe class="doc" :src="iframeSource"></iframe>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -39,7 +47,8 @@ export default {
       numPages: null,
       rendering: false,
       timeoutId: null,
-      pageLabel: ''
+      pageLabel: '',
+      iframeSource: 'https://docs.google.com/gview?url=' + xHTTPx + '/static/GloDET Quick Start Guide.pdf' + '&embedded=true'
     }
   },
   watch: {
@@ -147,4 +156,13 @@ export default {
   width: 80px;
 }
 
+.pdf-container {
+  width: 100%;
+  height: 1000px;
+}
+
+.doc {
+  width: 100%;
+  height: 1000px;
+}
 </style>

@@ -22,7 +22,7 @@
         <p>Many partners contribute GloDET’s expansive dataset, and select projects are presented to provide a better understanding of how the information may be applied. <router-link :to="'/partners_n_projects'">View our partners and projects</router-link>.</p>
 
         <h4 class="p-header">Get Started</h4>
-        <p>In order to view high-resolution data images and download GloDET datasets, you must sign-up for a user account. Click the <router-link :to="'/login'">login button</router-link> in the top right corner to start exploring. To quickly learn how to use the GloDET Data Explorer features, <a>watch our welcome and how-to video</a>.</p>
+        <p>In order to view high-resolution data images and download GloDET datasets, you must sign-up for a user account. Click the <router-link :to="'/login'">login button</router-link> in the top right corner to start exploring. To quickly learn how to use the GloDET Data Explorer features, read our <a href="static/GloDET Quick Start Guide.pdf" target="_blank">Quick Start Guide</a>.</p>
       </div>
     </div>
   </div>
