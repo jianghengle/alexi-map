@@ -4,7 +4,7 @@
       <div class="content text-content">
         <h4 class="p-header">Overview</h4>
         <p>Select projects from GloDET’s many contributing partners are presented below to provide a better understanding of how the daily ET data may be applied.</p>
-        <p>The Daugherty Water for Food Global Institute (DWFI) collaborates with partners around the globe, including government agencies, funding agencies and academic institutions, to obtain the resources needed to activate grids in the Data Explorer for which the ALEXI model is not currently computing results. If you are interested in partnering with DWFI to generate daily ET products for your region or country, please contact Director of Research Christopher Neale, at <a href="mailto:cneale@nebraska.edu">cneale@nebraska.edu</a> for more information.</p>
+        <p>The Daugherty Water for Food Global Institute (DWFI) collaborates with partners around the globe, including government agencies, funding agencies and academic institutions, to obtain the resources needed to activate grids in the Data Explorer for which the ALEXI model is not currently computing results. If you are interested in partnering with DWFI to generate daily ET products for your region or country, please contact Director of Research Dr. Christopher Neale, at <a href="mailto:cneale@nebraska.edu">cneale@nebraska.edu</a> for more information.</p>
         <br/>
         <h4 class="p-header">Partners & Projects</h4>
         <table class="table">
