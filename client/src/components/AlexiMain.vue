@@ -85,7 +85,8 @@
           :editable="true"
           :options="selectionOptions"
           @bounds_changed="selectionBoundsChanged"
-          @dragend="selectionBoundsChanged">
+          @dragend="selectionBoundsChanged"
+          ref="myRect">
         </gmap-rectangle>
         <ground-overlay
           v-for = "(t, i) in tileList"
@@ -106,7 +107,7 @@
     </div>
     <div class="map-options columns">
       <div class="column">
-        <div v-if="selectionBounds" class="columns">
+        <div v-if="newSelectionBounds" class="columns">
           <div class="column">
             <div class="select">
               <select v-model="mapOption">
@@ -134,22 +135,22 @@
         </div>
       </div>
       <div class="column">
-        <span class="field" v-if="selectionBounds">
+        <span class="field" v-if="newSelectionBounds">
           <span class="coordinate">
             <label class="coordinate-label">W</label>
-            <input class="input coordinate-input" type="number" v-model.number="selectionBounds.west">
+            <input class="input coordinate-input" type="number" v-model.number="newSelectionBounds.west">
           </span>
           <span class="coordinate">
             <label class="coordinate-label">N</label>
-            <input class="input coordinate-input" type="number" v-model.number="selectionBounds.north">
+            <input class="input coordinate-input" type="number" v-model.number="newSelectionBounds.north">
           </span>
           <span class="coordinate">
             <label class="coordinate-label">E</label>
-            <input class="input coordinate-input" type="number" v-model.number="selectionBounds.east">
+            <input class="input coordinate-input" type="number" v-model.number="newSelectionBounds.east">
           </span>
           <span class="coordinate">
             <label class="coordinate-label">S</label>
-            <input class="input coordinate-input" type="number" v-model.number="selectionBounds.south">
+            <input class="input coordinate-input" type="number" v-model.number="newSelectionBounds.south">
           </span>
         </span>
       </div>
@@ -180,7 +181,7 @@
           :date-disabled="dateDisabled"
           :main-tile-size="tileSize"
           :main-image-option="imageOption"
-          :selection-bounds="selectionBounds"
+          :selection-bounds="newSelectionBounds"
           @tile-window-date-changed="tileWindowDateChanged"
           @tile-window-deleted="tileWindowDeleted"
           @tile-window-tile-size-changed="tileWindowTileSizeChanged"
@@ -305,6 +306,7 @@ export default {
       gridOptions: {strokeWeight: 0.4, fillOpacity: 0.1},
       emptyGridOptions : {strokeWeight: 0.2, fillOpacity: 0},
       selectionBounds: {north: 25, south: 20, east: 25, west: 20},
+      newSelectionBounds: {north: 25, south: 20, east: 25, west: 20},
       selectionOptions: {strokeColor: '#FF0000', fillColor: '#FF0000', fillOpacity: 0.1, zIndex: 2},
       tileOpacity: 0.6,
       tileSize: 200,
@@ -408,14 +410,14 @@ export default {
       return emptyTiles
     },
     tileMatrix () {
-      if(!this.selectionBounds)
+      if(!this.newSelectionBounds)
         return null
-      var north = this.selectionBounds.north
-      var south = this.selectionBounds.south
-      var west = this.selectionBounds.west
-      var east = this.selectionBounds.east
+      var north = this.newSelectionBounds.north
+      var south = this.newSelectionBounds.south
+      var west = this.newSelectionBounds.west
+      var east = this.newSelectionBounds.east
       if(west < east){
-        var indexMatrix = this.getTileIndexMatrix(this.selectionBounds)
+        var indexMatrix = this.getTileIndexMatrix(this.newSelectionBounds)
       }else{
         var b1 = {north: north, south: south, west: west, east: 180}
         var b2 = {north: north, south: south, west: -180, east: east}
@@ -514,6 +516,12 @@ export default {
         east: lng + this.mapSize / 10,
         west: lng
       }
+      this.newSelectionBounds = {
+        north: lat,
+        south: lat - this.mapSize / 10,
+        east: lng + this.mapSize / 10,
+        west: lng
+      }
     },
     newSelection () {
       var center = this.newMapCenter
@@ -525,22 +533,39 @@ export default {
         east: center.lng + lngRadius,
         west: center.lng - lngRadius
       }
+      this.newSelectionBounds = {
+        north: center.lat + latRadius,
+        south: center.lat - latRadius,
+        east: center.lng + lngRadius,
+        west: center.lng - lngRadius
+      }
     },
     clearSelection () {
       this.selectionBounds = null
+      this.newSelectionBounds = null
     },
     mapBoundsChanged (e) {
-      if(e)
-        this.mapSize = e.f.f - e.f.b
+      var bounds = this.$refs.map.$mapObject.getBounds()
+      if(bounds){
+        var north = bounds.getNorthEast().lat()
+        var south = bounds.getSouthWest().lat()
+        this.mapSize = north - south
+      }
     },
     selectionBoundsChanged (e) {
-      if(e && e.f && e.b)
-        this.selectionBounds = {
-          north: e.f.f,
-          south: e.f.b,
-          east: e.b.f,
-          west: e.b.b
+      var bounds = this.$refs.myRect.$rectangleObject.getBounds()
+      if(bounds){
+        var north = bounds.getNorthEast().lat()
+        var south = bounds.getSouthWest().lat()
+        var east = bounds.getNorthEast().lng()
+        var west = bounds.getSouthWest().lng()
+        this.newSelectionBounds = {
+          north: north,
+          south: south,
+          east: east,
+          west: west
         }
+      }
     },
     getTileIndexMatrix (bounds) {
       var northWest = {lat: bounds.north, lng: bounds.west}
@@ -618,8 +643,10 @@ export default {
       if(setting.selection){
         var nsew = setting.selection.split(',').map(parseFloat)
         this.selectionBounds = {north: nsew[0], south: nsew[1], east: nsew[2], west: nsew[3]}
+        this.newSelectionBounds = {north: nsew[0], south: nsew[1], east: nsew[2], west: nsew[3]}
       }else{
         this.selectionBounds = null
+        this.newSelectionBounds = null
       }
       this.tileSize = setting.tileSize
       if(setting.date){
@@ -634,7 +661,7 @@ export default {
       setting.mapCenter = [this.newMapCenter.lat, this.newMapCenter.lng].join(', ')
       setting.mapZoom = this.mapZoom
       setting.tileOpacity = this.tileOpacity
-      var b = this.selectionBounds
+      var b = this.newSelectionBounds
       if(b){
         setting.selection = [b.north, b.south, b.east, b.west].join(', ')
       }else{

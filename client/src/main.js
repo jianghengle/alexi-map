@@ -45,25 +45,19 @@ Vue.use(VueGoogleMaps, {
   }
 })
 
-Vue.component('ground-overlay', Vue.extend({
-  render() {
-    return '';
+Vue.component('ground-overlay', VueGoogleMaps.MapElementFactory({
+  mappedProps: {
+    'opacity': {}
   },
-  mixins: [VueGoogleMaps.MapElementMixin],
-  props: ['source', 'bounds', 'opacity'],
-  created() {},
-  deferredReady: function() {
-    this.$overlay = new google.maps.GroundOverlay(
-      this.source,
-      this.bounds
-    );
-    this.$overlay.setOpacity(this.opacity);
-    this.$overlay.setMap(this.$map);
+  props: {
+    'source': {type: String},
+    'bounds': {type: Object},
   },
-  destroyed: function() {
-    this.$overlay.setMap(null);
-  },
-}))
+  events: ['click', 'dblclick'],
+  name: 'groundOverlay',
+  ctr: () => google.maps.GroundOverlay,
+  ctrArgs: (options, {source, bounds}) => [source, bounds, options],
+}));
 
 Vue.config.productionTip = false
 
