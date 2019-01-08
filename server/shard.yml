@@ -10,12 +10,13 @@ targets:
   maintainer:
     main: src/maintainer.cr
 
+crystal: 0.27.0
+
 license: MIT
 
 dependencies:
   crecto:
-    github: fridgerator/crecto
-    version: 0.9.0
+    github: Crecto/crecto
 
   pg:
     github: will/crystal-pg

@@ -41,8 +41,8 @@ module AlexiServer
           str << "\"hearFrom\":" << @hear_from.to_json << ","
           str << "\"subscribe_wfi\":" << subscribe_wfi.to_s << ","
           str << "\"subscribe_ndmc\":" << subscribe_ndmc.to_s << ","
-          str << "\"createdTime\":" << @created_at.as(Time).epoch << ","
-          str << "\"updatedTime\":" << @updated_at.as(Time).epoch
+          str << "\"createdTime\":" << @created_at.as(Time).to_unix << ","
+          str << "\"updatedTime\":" << @updated_at.as(Time).to_unix
           str << "}"
         end
         result
@@ -66,7 +66,7 @@ module AlexiServer
       end
 
       def self.create_user(new_user, subscribe_wfi, subscribe_ndmc)
-        user = Repo.get_by(User, email: new_user.email)
+        user = Repo.get_by(User, email: new_user.email.to_s)
         raise "User existed!" unless user.nil?
 
         new_user.auth_token = Random::Secure.base64(32).to_s
@@ -74,7 +74,7 @@ module AlexiServer
         changeset = Repo.insert(new_user)
         raise changeset.errors.to_s unless changeset.valid?
 
-        user = Repo.get_by(User, email: new_user.email)
+        user = Repo.get_by(User, email: new_user.email.to_s)
         raise "Cannot find new user" if user.nil?
         Setting.create_setting(user)
         User.send_admins_email(user, subscribe_wfi, subscribe_ndmc)
@@ -129,7 +129,7 @@ module AlexiServer
             str << "\"email\":" << u.email.to_json << ","
             str << "\"firstName\":" << u.first_name.to_json << ","
             str << "\"lastName\":" << u.last_name.to_json << ","
-            str << "\"registeredAt\":" << u.created_at.as(Time).epoch << ","
+            str << "\"registeredAt\":" << u.created_at.as(Time).to_unix << ","
             str << "\"status\":" << u.status.to_json
             str << "}"
           end

@@ -16,7 +16,7 @@ module AlexiServer
           end
           str << "\"subject\":" << @subject.to_json << ","
           str << "\"content\":" << @content.to_json << ","
-          str << "\"created\":" << @created_at.as(Time).epoch
+          str << "\"created\":" << @created_at.as(Time).to_unix
           str << "}"
         end
         result

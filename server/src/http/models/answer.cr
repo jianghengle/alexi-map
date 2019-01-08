@@ -14,7 +14,7 @@ module AlexiServer
           str << "\"userId\":" << @user_id << ","
           str << "\"questionId\":" << @question_id << ","
           str << "\"content\":" << @content.to_json << ","
-          str << "\"created\":" << @created_at.as(Time).epoch
+          str << "\"created\":" << @created_at.as(Time).to_unix
           str << "}"
         end
         result

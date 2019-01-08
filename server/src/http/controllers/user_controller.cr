@@ -233,7 +233,7 @@ module AlexiServer
           raise "failed to verify human" unless a + b == c
           t = a - b
           now = Time.now
-          h = (now.epoch / 3600) % 4
+          h = (now.to_unix / 3600) % 4
           puts t
           puts h
           raise "failed to verify human!" unless (t == h || (t + 1) % 4 == h)
