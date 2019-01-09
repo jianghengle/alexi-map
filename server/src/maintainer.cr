@@ -27,7 +27,7 @@ module AlexiServer
         end
 
         now = Time.now
-        download_ids = [] of Int32 | Int64 | String | Nil
+        download_ids = [] of Int8 | Int16 | Int32 | Int64 | String | Nil
         moved = 0
 
         downloads.each do |download|
