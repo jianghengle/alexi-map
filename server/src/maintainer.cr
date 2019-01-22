@@ -19,6 +19,11 @@ module AlexiServer
   class Maintainer
     def initialize
       begin
+        command = "systemctl restart alexi_server"
+        io = IO::Memory.new
+        Process.run(command, shell: true, output: io)
+        puts io.to_s
+
         downloads = HttpAPI::Download.get_all_downloads
         if downloads.empty?
           puts "No downloads at all"
