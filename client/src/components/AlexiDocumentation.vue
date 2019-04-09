@@ -17,6 +17,12 @@
           <ul class="menu-list">
             <li><a @click="scrollToElement('quickStart')">GloDET Quick Start Guide</a></li>
           </ul>
+          <p class="menu-label">
+            Terms and Conditions
+          </p>
+          <ul class="menu-list">
+            <li><a @click="scrollToElement('terms')">GloDET Terms and Conditions</a></li>
+          </ul>
         </aside>
       </div>
       <div class="column">
@@ -50,6 +56,14 @@
               <iframe class="doc" :src="iframeSource"></iframe>
             </div>
           </div>
+          <div class="content text-content">
+            <h4 id="terms" class="p-header">GloDET Terms and Conditions
+              <a href="static/GloDET Terms and Conditions_FINAL.pdf" class="button is-text" download>link</a>
+            </h4>
+            <div class="pdf-container">
+              <iframe class="doc" :src="termsSource"></iframe>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -70,7 +84,8 @@ export default {
       rendering: false,
       timeoutId: null,
       pageLabel: '',
-      iframeSource: 'https://docs.google.com/gview?url=' + xHTTPx + '/static/GloDET Quick Start Guide.pdf' + '&embedded=true'
+      iframeSource: 'https://docs.google.com/gview?url=' + xHTTPx + '/static/GloDET Quick Start Guide.pdf' + '&embedded=true',
+      termsSource: 'https://docs.google.com/gview?url=' + xHTTPx + '/static/GloDET Terms and Conditions_FINAL.pdf' + '&embedded=true'
     }
   },
   watch: {
@@ -170,11 +185,13 @@ export default {
 
 .p-header{
   font-weight: bold;
+  padding-top: 0.5em;
   margin-bottom: 0.5em;
   color: #05485A;
 }
 
 .text-content {
+  margin-top: 60px;
   margin-bottom: 30px;
 }
 

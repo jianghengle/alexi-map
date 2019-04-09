@@ -159,7 +159,7 @@
         <div class="control">
           <label class="checkbox">
             <input type="checkbox" v-model="agreeTerms">
-            Click to agree to the <a href="http://waterforfood.nebraska.edu/" target="_blank">terms and conditions</a> for use of the GloDET datasets 
+            Click to agree to the <a href="static/GloDET Terms and Conditions_FINAL.pdf" target="_blank">terms and conditions</a> for use of the GloDET datasets
           </label>
         </div>
       </div>
@@ -285,6 +285,18 @@ export default {
         && this.purpose.length && this.hearFrom.length
         && this.agreeTerms
     }
+  },
+  watch: {
+    agreeTerms: function (val) {
+      if(val){
+        var link = document.createElement("a");
+        link.target = '_blank';
+        link.href = 'static/GloDET Terms and Conditions_FINAL.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    },
   },
   methods: {
     register () {
