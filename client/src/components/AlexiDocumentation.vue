@@ -16,6 +16,7 @@
           </p>
           <ul class="menu-list">
             <li><a @click="scrollToElement('quickStart')">GloDET Quick Start Guide</a></li>
+            <li><a @click="scrollToElement('videoTutorial')">GloDET Video Tutorial</a></li>
           </ul>
           <p class="menu-label">
             Terms and Conditions
@@ -54,6 +55,17 @@
             </h4>
             <div class="pdf-container">
               <iframe class="doc" :src="iframeSource"></iframe>
+            </div>
+          </div>
+          <div class="content text-content">
+            <h4 id="videoTutorial" class="p-header">GloDET Explorer Tutorial
+              <a href="static/GloDET Explorer Tutorial_Draft_v5.mp4" class="button is-text" download>link</a>
+            </h4>
+            <div class="video-container">
+              <video controls>
+                <source src="static/GloDET Explorer Tutorial_Draft_v5.mp4" type="video/mp4">
+                Your browser does not support HTML5 video.
+              </video>
             </div>
           </div>
           <div class="content text-content">
@@ -206,6 +218,10 @@ export default {
 .pdf-container {
   width: 100%;
   height: 1000px;
+}
+
+.video-container {
+  width: 100%;
 }
 
 .doc {
