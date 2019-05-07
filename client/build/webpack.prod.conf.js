@@ -30,7 +30,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env,
-      'xHTTPx': JSON.stringify('https://glodet.nebraska.edu'),
+      'xHTTPx': JSON.stringify('https://glodet.nebraska.edu:3002'),
       'xGOOGLEKEYx': JSON.stringify(googleKey)
     }),
     new webpack.optimize.UglifyJsPlugin({

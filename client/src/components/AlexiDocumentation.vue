@@ -85,7 +85,6 @@
 <script>
 import pdfjsLib from 'pdfjs-dist'
 
-
 export default {
   name: 'alexi-documentation',
   data () {
@@ -96,8 +95,8 @@ export default {
       rendering: false,
       timeoutId: null,
       pageLabel: '',
-      iframeSource: 'https://docs.google.com/gview?url=' + xHTTPx + '/static/GloDET Quick Start Guide.pdf' + '&embedded=true',
-      termsSource: 'https://docs.google.com/gview?url=' + xHTTPx + '/static/GloDET Terms and Conditions_FINAL.pdf' + '&embedded=true'
+      iframeSource: 'https://docs.google.com/gview?url=https://glodet.nebraska.edu/static/GloDET Quick Start Guide.pdf&embedded=true',
+      termsSource: 'https://docs.google.com/gview?url=https://glodet.nebraska.edu/static/GloDET Terms and Conditions_FINAL.pdf&embedded=true'
     }
   },
   watch: {
