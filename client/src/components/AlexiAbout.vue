@@ -26,9 +26,15 @@
         <p>The ALEXI model produces high-resolution (375-m) ET Products.  Processing nodes are 15 x 15 degree boxes, shown as gray grid cells in the GloDET Data Explorer.  Shaded gray boxes denote active processing nodes.</p>
         <p>The disadvantage to remote sensing modeling is that the output record often suffers large spatial and temporal gaps due to cloud cover and infrequent image availability as governed by the satellite overpass schedule (<em>Anderson et al., 2007</em>).  Data post-processing and gap filling will be used to resolve this issue for the GloDET dataset.  </p>
 
+        <h4 class="p-header">Model Validation</h4>
+        <p>Advanced equipment and sensors, such as the SmartFlux eddy covariance towers developed by LI-COR Biosciences, can accurately measure ET at point locations. This information, for different crop types and climate conditions in the U.S., is consolidated in the Parallel 41 Flux Network, a geographic collection of flux towers. Daily ET measurements are freely available through the <a href="https://parallel41.nebraska.edu" target="_blank">Parallel 41 website</a>.</p>
+
+        <p>Combining the Parallel 41 Flux Network with the Global Daily Evapotranspiration dataset provides reliable, high-quality spatial information on daily crop water use (ET), in inches or millimeters per day, anchored by flux tower validation points.</p>
+        <p style="text-align: center"><img src="static/Model Validation.jpg"></p>
+
         <h4 class="p-header">Citation Instructions</h4>
         <p>When using GloDET datasets in your work, please ensure that you always cite the data as:</p>
-        <ul style="list-style-type: none;"><li>Robert B. Daugherty Water for Food Global Institute. (2018). GloDET: Global daily evapo-transpiration. University of Nebraska. Lincoln, NE, USA. &lt;glodet.nebraska.edu&gt;.</li></ul>
+        <ul style="list-style-type: none;"><li>Robert B. Daugherty Water for Food Global Institute. (Year). GloDET: Global daily evapo-transpiration. University of Nebraska. Lincoln, NE, USA. &lt;glodet.nebraska.edu&gt;.</li></ul>
         <p>In addition, please also acknowledge appropriately the original USDA ARS ALEXI model and research by citing associated key publications, such as:</p>
         <ul style="list-style-type: none;">
           <li>Anderson, M. C., J. M. Norman, J. R. Mecikalski, J. A. Otkin, and W. P. Kustas. (2007a). A climatological study of evapotranspiration and moisture stress across the continental United States based on thermal remote sensing: 1. Model formulation. J. Geophys. Res. Vol 112, D10117, doi:10.1029/2006JD007506.</li>

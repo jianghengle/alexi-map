@@ -711,7 +711,8 @@ export default {
         var year = resp[1][1]
         var day = resp[2][resp[2].length-1]
         var ms = (new Date(year, 0, 1, 12)).getTime() + 86400000*(day-1)
-        this.date = new Date(ms)
+        //this.date = new Date(ms)
+        this.date = new Date(2017, 6, 1)
       }
       this.tileWindows = [0]
       this.ready = true

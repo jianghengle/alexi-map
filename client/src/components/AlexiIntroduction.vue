@@ -8,15 +8,15 @@
         </span>
       </h4>
       <div v-show="open">
-        <p>GloDET is a free portal to view and download global daily evapotranspiration spatial datasets. The data is calculated by the ALEXI two-source energy balance model, developed by the U.S. Department of Agriculture’s Agricultural Research Service. Datasets may be downloaded at 375-m resolution and subsequently disaggregated to 30-m resolution.</p>
+        <p>GloDET is a free portal to view and download global daily evapotranspiration (ET) spatial datasets. The data is calculated by the ALEXI two-source energy balance model, developed by the U.S. Department of Agriculture’s Agricultural Research Service. Datasets may be downloaded at 375 meter resolution and subsequently disaggregated to 30 meter (approximately 100-ft) resolution using the PyDisALEXI software.</p>
 
-        <p>Applications of this data include estimations of the Evaporative Stress Index (ESI), used in the Composite Drought Index (CDI); water accounting and availability analysis in watersheds and river basins; and field scale water productivity and crop yield estimates.</p>
+        <p>Knowing ET, which represents daily crop water use, enables water accounting, water productivity analysis, irrigation scheduling, variable rate irrigation and drought monitoring.</p>
 
         <h4 class="p-header">Model Development and Citation</h4>
         <p>Information on GloDET model development and citation instruction is available. <router-link :to="'/about'">Discover more about GloDET</router-link>.</p>
 
         <h4 class="p-header">Training Resources</h4>
-        <p>Instruction manuals, training videos and other resources are available. <router-link :to="'/documentation'">See our documentation</router-link>.</p>
+        <p>Lectures, tutorials and other resources are available. <router-link :to="'/documentation'">See our documentation</router-link>.</p>
 
         <h4 class="p-header">Partners and Projects</h4>
         <p>Many partners contribute GloDET’s expansive dataset, and select projects are presented to provide a better understanding of how the information may be applied. <router-link :to="'/partners_n_projects'">View our partners and projects</router-link>.</p>

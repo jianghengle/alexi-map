@@ -73,7 +73,7 @@
     </nav>
     <div class="color-seperator"></div>
     <div class="notification is-danger">
-      NOTICE: The GloDET data viewer is currently still under development. New user accounts will be approved once development is complete.  Any questions or comments are welcome at <a href="mailto:glodet@nebraska.edu">glodet@nebraska.edu</a>.  Thank you for visiting.
+      NOTICE: GloDET datasets continue to be validated. ET maps from 2013-2017 are published here. Real-time ET maps are currently in development.
     </div>
   </div>
 </template>
