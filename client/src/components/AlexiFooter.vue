@@ -10,6 +10,7 @@
       <a href="http://drought.unl.edu"><img src="static/logos/NDMC.png" width="400" class="logo"></a>
       <a href="https://www.usaid.gov/"><img src="static/logos/USAID.png" width="300" class="logo usaid"></a>
       <a href="http://www.biosaline.org/"><img src="static/logos/ICBA.png" width="150" class="logo icba"></a>
+      <a href="http://www.iwmi.cgiar.org/"><img src="static/logos/IWMI.png" width="120" class="logo iwmi"></a>
     </div>
   </div>
 </footer>
@@ -50,6 +51,12 @@ export default {
 .icba {
   position: relative;
   top: -10px;
+}
+
+.iwmi {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  margin-left: 30px;
 }
 
 </style>
